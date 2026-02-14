@@ -1,84 +1,130 @@
+// Overwrite App.jsx with clean V2 version
 import { useState, useEffect } from 'react';
 import { loadState, saveState } from './lib/storage';
+import { CharacterList } from './components/CharacterList';
+import { CharacterCreator } from './components/CharacterCreator';
+import { HexaGrid } from './components/HexaGrid';
+import { PriorityList } from './components/PriorityList';
+import { createCharacter } from './lib/stateSchema';
+// CSS imports are global in main.jsx usually, or we can import local styles here if we move them
+import './styles/app.css';
 
 function App() {
-  const [data, setData] = useState(() => loadState());
-  const [lastSaved, setLastSaved] = useState(null);
+  const [state, setState] = useState(() => loadState());
+  const [showCreator, setShowCreator] = useState(false);
 
-  const handleUpdate = (field, value) => {
-    setData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    setLastSaved(new Date());
-  };
-
-  const handleResourceUpdate = (resource, value) => {
-    setData((prev) => ({
-      ...prev,
-      [resource]: parseInt(value) || 0,
-    }));
-    setLastSaved(new Date());
-  };
-
-  // Auto-save whenever data changes
+  // Auto-save
   useEffect(() => {
-    saveState(data);
-  }, [data]);
+    saveState(state);
+  }, [state]);
+
+  // -- Handlers --
+
+  const handleCreateChar = ({ name, job, level }) => {
+    const newChar = createCharacter(name, job, level);
+    setState(prev => ({
+      ...prev,
+      characters: {
+        ...prev.characters,
+        [newChar.id]: newChar
+      },
+      activeCharacterId: newChar.id
+    }));
+    setShowCreator(false);
+  };
+
+  const handleSelectChar = (id) => {
+    setState(prev => ({ ...prev, activeCharacterId: id }));
+  };
+
+  const activeChar = state.activeCharacterId ? state.characters[state.activeCharacterId] : null;
+
+  const handleHexaUpdate = (nodeId, level) => {
+    if (!activeChar) return;
+    const safeLevel = Math.max(0, Math.min(30, Number(level) || 0));
+
+    setState(prev => ({
+      ...prev,
+      characters: {
+        ...prev.characters,
+        [activeChar.id]: {
+          ...activeChar,
+          skillProgress: {
+            ...activeChar.skillProgress,
+            [nodeId]: safeLevel
+          }
+        }
+      }
+    }));
+  };
+
+  const handleBack = () => {
+    setState(prev => ({ ...prev, activeCharacterId: null }));
+  };
+
+  // -- Render --
+
+  if (showCreator) {
+    return (
+      <CharacterCreator 
+        onCancel={() => setShowCreator(false)} 
+        onCreate={handleCreateChar} 
+      />
+    );
+  }
+
+  // If we have characters but no active one selected, show list
+  // If we have NO characters at all, CharacterList handles the empty state
+  if (!activeChar) {
+    return (
+      <div className="app-container">
+        <header>
+          <div className="header-content">
+            <h1>MapleStory Hexa Tracker</h1>
+          </div>
+        </header>
+        <main>
+          <CharacterList 
+            characters={state.characters}
+            activeId={state.activeCharacterId}
+            onSelect={handleSelectChar}
+            onAdd={() => setShowCreator(true)}
+          />
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <div className='app-container'>
+    <div className="app-container">
       <header>
-        <h1>MapleStory Hexa Tracker</h1>
-        <p>Track your Sol Erda and Fragment progress</p>
+        <div className="header-content">
+          <h1>MapleStory Hexa Tracker</h1>
+          <button onClick={handleBack} className="btn-secondary">← Back to List</button>
+        </div>
       </header>
 
       <main>
-        <section className='tracker-card'>
-          <h2>Character Info</h2>
-          <div className='form-group'>
-            <label>Character Name</label>
-            <input
-              type='text'
-              value={data.characterName}
-              onChange={(e) => handleUpdate('characterName', e.target.value)}
-            />
-          </div>
-          <div className='form-group'>
-            <label>Level</label>
-            <input
-              type='number'
-              value={data.level}
-              onChange={(e) => handleUpdate('level', parseInt(e.target.value) || 0)}
-            />
-          </div>
-        </section>
-
-        <section className='tracker-card'>
-          <h2>Resources</h2>
-          <div className='resources-grid'>
-            <div className='form-group'>
-              <label>Sol Erda Fragments</label>
-              <input
-                type='number'
-                value={data.fragments}
-                onChange={(e) => handleResourceUpdate('fragments', e.target.value)}
-              />
-            </div>
-            <div className='form-group'>
-              <label>Sol Erda Energy</label>
-              <input
-                type='number'
-                value={data.dreamSolErda}
-                onChange={(e) => handleResourceUpdate('dreamSolErda', e.target.value)}
-              />
-            </div>
-          </div>
-        </section>
-
-        <div className='save-status'>
-          {lastSaved && `Auto-saved at ${lastSaved.toLocaleTimeString()}`}
+        <div className="dashboard-header">
+          <h2>{activeChar.name} <span className="job-tag">({activeChar.job})</span></h2>
         </div>
+        
+        <section className="tracker-card">
+          <h3>Hexa Matrix Progress</h3>
+          <p className="hint">Enter your current level (0-30) for each node.</p>
+          <HexaGrid 
+            progress={activeChar.skillProgress} 
+            onUpdate={handleHexaUpdate} 
+          />
+        </section>
+
+        <section className="tracker-card">
+          <PriorityList 
+            sequence={activeChar.prioritySequence} 
+            progress={activeChar.skillProgress}
+            onCompleteStep={handleHexaUpdate} 
+          />
+        </section>
       </main>
     </div>
   );

@@ -1,0 +1,61 @@
+.hexa-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.hexa-node-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #9ca3af;
+  padding: 1rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hexa-node-card.type-skill { border-left-color: #ec4899; }
+.hexa-node-card.type-mastery { border-left-color: #3b82f6; }
+.hexa-node-card.type-boost { border-left-color: #10b981; }
+.hexa-node-card.type-common { border-left-color: #8b5cf6; }
+
+.node-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.node-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.node-input-wrapper input {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.progress-bar {
+  margin-top: 0.5rem;
+  height: 4px;
+  background: #f3f4f6;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #cbd5e1;
+  transition: width 0.3s ease;
+}
+
+.type-skill .progress-fill { background: #ec4899; }
+.type-mastery .progress-fill { background: #3b82f6; }
+.type-boost .progress-fill { background: #10b981; }

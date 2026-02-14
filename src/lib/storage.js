@@ -1,24 +1,31 @@
-import { DEFAULT_STATE, CURRENT_VERSION } from './stateSchema';
+import { DEFAULT_STATE_V2, CURRENT_VERSION, migrateV1ToV2 } from './stateSchema';
 
-const STORAGE_KEY = 'maplestory_hexa_tracker_v1';
+const STORAGE_KEY = 'maplestory_hexa_tracker_v1'; // keep same key but upgrade contents
 
 export const loadState = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_STATE;
+    if (!raw) return DEFAULT_STATE_V2;
 
     const parsed = JSON.parse(raw);
 
-    // Basic migration check (can be expanded later)
-    if (parsed.version !== CURRENT_VERSION) {
-      console.warn('Version mismatch, resetting to default for safety');
-      return DEFAULT_STATE;
+    // V1 -> V2 Migration
+    if (parsed.version === 1) {
+      console.log("Migrating V1 state to V2...");
+      return migrateV1ToV2(parsed);
     }
 
-    return { ...DEFAULT_STATE, ...parsed };
+    if (parsed.version !== CURRENT_VERSION) {
+      console.warn('Version mismatch or unknown version, resetting to default safely');
+      // In a real app we might try harder to salvage, 
+      // but here we just return empty V2 state to avoid crashes
+      return DEFAULT_STATE_V2;
+    }
+
+    return { ...DEFAULT_STATE_V2, ...parsed };
   } catch (e) {
     console.error('Failed to load state', e);
-    return DEFAULT_STATE;
+    return DEFAULT_STATE_V2;
   }
 };
 

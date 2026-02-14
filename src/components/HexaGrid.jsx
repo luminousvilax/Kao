@@ -1,0 +1,45 @@
+import { SKILL_NODES } from '../data/jobs';
+import './HexaGrid.css';
+
+export function HexaGrid({ progress, onUpdate }) {
+  const nodes = Object.values(SKILL_NODES);
+
+  const handleLevelChange = (nodeId, valStr) => {
+    let val = parseInt(valStr, 10);
+    if (isNaN(val)) val = 0;
+    
+    // Clamp 0-30
+    if (val < 0) val = 0;
+    if (val > 30) val = 30;
+
+    onUpdate(nodeId, val);
+  };
+
+  return (
+    <div className="hexa-grid-container">
+      {nodes.map((node) => {
+        const currentLevel = progress[node.id] || 0;
+        
+        return (
+          <div key={node.id} className={`hexa-node-card type-${node.type}`}>
+            <span className="node-label">{node.label}</span>
+            <div className="node-input-wrapper">
+              <input 
+                type="number" 
+                min="0" max="30"
+                value={currentLevel}
+                onChange={(e) => handleLevelChange(node.id, e.target.value)}
+              />
+            </div>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${(currentLevel / 30) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
