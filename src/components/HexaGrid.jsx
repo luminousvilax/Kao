@@ -4,6 +4,12 @@ import './HexaGrid.css';
 export function HexaGrid({ progress, onUpdate }) {
   const nodes = Object.values(SKILL_NODES);
 
+  const groupedByType = nodes.reduce((acc, n) => {
+    if (!acc[n.type]) acc[n.type] = [];
+    acc[n.type].push(n);
+    return acc;
+  }, {});
+
   const handleLevelChange = (nodeId, valStr) => {
     let val = parseInt(valStr, 10);
     if (isNaN(val)) val = 0;
@@ -17,29 +23,33 @@ export function HexaGrid({ progress, onUpdate }) {
 
   return (
     <div className="hexa-grid-container">
-      {nodes.map((node) => {
-        const currentLevel = progress[node.id] || 0;
-        
-        return (
-          <div key={node.id} className={`hexa-node-card type-${node.type}`}>
-            <span className="node-label">{node.label}</span>
-            <div className="node-input-wrapper">
-              <input 
-                type="number" 
-                min="0" max="30"
-                value={currentLevel}
-                onChange={(e) => handleLevelChange(node.id, e.target.value)}
-              />
-            </div>
-            <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${(currentLevel / 30) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-        );
-      })}
+      {Object.entries(groupedByType).map(([type, typeNodes]) => (
+        <div key={type} className={`hexa-row type-${type}`}>
+          {typeNodes.map((node) => {
+            const currentLevel = progress[node.id] || 0;
+
+            return (
+              <div key={node.id} className={`hexa-node-card type-${node.type}`}>
+                <span className="node-label">{node.label}</span>
+                <div className="node-input-wrapper">
+                  <input
+                    type="number"
+                    min="0" max="30"
+                    value={currentLevel}
+                    onChange={(e) => handleLevelChange(node.id, e.target.value)}
+                  />
+                </div>
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${(currentLevel / 30) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }
