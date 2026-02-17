@@ -22,11 +22,16 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
 }
 
 .char-card:hover {
   border-color: #3b82f6;
   transform: translateY(-2px);
+}
+
+.char-card:hover .btn-delete {
+  opacity: 0.6;
 }
 
 .char-card.active {
@@ -51,6 +56,59 @@
   font-size: 0.9rem;
   color: #374151;
   font-weight: 500;
+}
+
+.btn-delete {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  opacity: 1 !important;
+  background: #fee2e2;
+}
+
+.list-header h2 {
+  margin: 0;
+}
+
+.reorder-hint {
+  font-size: 0.8rem;
+  color: #3b82f6;
+  font-weight: 500;
+  display: block;
+}
+
+.char-card.reorder-mode {
+  animation: wiggle 0.3s ease-in-out infinite alternate;
+  border-style: dashed;
+  user-select: none;
+}
+
+@keyframes wiggle {
+  from { transform: rotate(-0.5deg); }
+  to { transform: rotate(0.5deg); }
+}
+
+.char-card.dragging {
+  opacity: 0.4;
+  border: 2px solid #3b82f6;
+}
+
+.char-card.drag-over {
+  border: 2px solid #3b82f6;
+  background: #f0f7ff;
 }
 
 .empty-state {

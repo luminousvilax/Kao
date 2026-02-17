@@ -28,6 +28,7 @@ function App() {
         ...prev.characters,
         [newChar.id]: newChar
       },
+      characterOrder: [...(prev.characterOrder || []), newChar.id],
       activeCharacterId: newChar.id
     }));
     setShowCreator(false);
@@ -35,6 +36,35 @@ function App() {
 
   const handleSelectChar = (id) => {
     setState(prev => ({ ...prev, activeCharacterId: id }));
+  };
+
+  const handleDeleteChar = (id) => {
+    const charName = state.characters[id]?.name;
+    if (window.confirm(`Are you sure you want to delete ${charName}?\nAll progress will be lost.`)) {
+      setState(prev => {
+        const nextChars = { ...prev.characters };
+        delete nextChars[id];
+        return {
+          ...prev,
+          characters: nextChars,
+          characterOrder: (prev.characterOrder || []).filter(cid => cid !== id),
+          activeCharacterId: prev.activeCharacterId === id ? null : prev.activeCharacterId
+        };
+      });
+    }
+  };
+
+  const handleSwapChars = (fromIndex, toIndex) => {
+    setState(prev => {
+      const order = prev.characterOrder?.length 
+        ? [...prev.characterOrder] 
+        : Object.keys(prev.characters);
+      
+      const newOrder = [...order];
+      const [moved] = newOrder.splice(fromIndex, 1);
+      newOrder.splice(toIndex, 0, moved);
+      return { ...prev, characterOrder: newOrder };
+    });
   };
 
   const activeChar = state.activeCharacterId ? state.characters[state.activeCharacterId] : null;
@@ -86,8 +116,11 @@ function App() {
         <main>
           <CharacterList 
             characters={state.characters}
+            characterOrder={state.characterOrder}
             activeId={state.activeCharacterId}
             onSelect={handleSelectChar}
+            onDelete={handleDeleteChar}
+            onSwap={handleSwapChars}
             onAdd={() => setShowCreator(true)}
           />
         </main>

@@ -8,6 +8,10 @@ A browser-based tracker for MapleStory's 6th Job (Hexa) progression.
 - **Resource Tracking**: Track Sol Erda and Fragments.
 - **Character Info**: Basic character level and name tracking.
 
+## Dev Status
+
+Useful sequence data is not ready yet.
+
 ## Getting Started
 
 ### Prerequisites

@@ -5,7 +5,8 @@ export const CURRENT_VERSION = 2;
 export const DEFAULT_STATE_V2 = {
   version: CURRENT_VERSION,
   characters: {},
-  activeCharacterId: null
+  activeCharacterId: null,
+  characterOrder: [] // IDs in sorted order
 };
 
 export const createCharacter = (name, job, level) => {
