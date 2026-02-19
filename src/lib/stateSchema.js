@@ -1,5 +1,3 @@
-import { getSequence } from '../data/sequences';
-
 export const CURRENT_VERSION = 2;
 
 export const DEFAULT_STATE_V2 = {
@@ -27,7 +25,7 @@ export const createCharacter = (name, job, level) => {
       b3: 0,
       b4: 0,
       common: 0
-    },
-    prioritySequence: getSequence(job)
+    }
+    // prioritySequence removed to use global defaults unless customized
   };
 };

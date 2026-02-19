@@ -7,6 +7,7 @@ import { HexaGrid } from './components/HexaGrid';
 import { PriorityList } from './components/PriorityList';
 import { createCharacter } from './lib/stateSchema';
 import { getJobNodeData, SKILL_NODES } from './data/jobs';
+import { getSequence } from './data/sequences';
 // CSS imports are global in main.jsx usually, or we can import local styles here if we move them
 import './styles/app.css';
 
@@ -77,6 +78,9 @@ function App() {
     return acc;
   }, {}) : {};
 
+  const activeSequence = activeChar ? (activeChar.prioritySequence || getSequence(activeChar.job)) : [];
+  const isCustomSequence = activeChar && !!activeChar.prioritySequence;
+
   const handleHexaUpdate = (nodeId, level) => {
     if (!activeChar) return;
     const safeLevel = Math.max(0, Math.min(30, Number(level) || 0));
@@ -94,6 +98,37 @@ function App() {
         }
       }
     }));
+  };
+
+  const handleSequenceUpdate = (newSequence) => {
+    if (!activeChar) return;
+    setState(prev => ({
+      ...prev,
+      characters: {
+        ...prev.characters,
+        [activeChar.id]: {
+          ...activeChar,
+          prioritySequence: newSequence
+        }
+      }
+    }));
+  };
+
+  const handleResetSequence = () => {
+    if (!activeChar) return;
+    // Remove the custom sequence so it falls back to default
+    setState(prev => {
+      const nextChar = { ...activeChar };
+      delete nextChar.prioritySequence;
+        
+      return {
+        ...prev,
+        characters: {
+          ...prev.characters,
+          [activeChar.id]: nextChar
+        }
+      };
+    });
   };
 
   const handleBack = () => {
@@ -162,10 +197,13 @@ function App() {
 
         <section className="tracker-card">
           <PriorityList 
-            sequence={activeChar.prioritySequence} 
+            sequence={activeSequence} 
             progress={activeChar.skillProgress}
             onCompleteStep={handleHexaUpdate} 
             nodeMetadata={nodeMetadata}
+            isCustom={isCustomSequence}
+            onUpdateSequence={handleSequenceUpdate}
+            onResetSequence={handleResetSequence}
           />
         </section>
       </main>

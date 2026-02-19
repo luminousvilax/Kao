@@ -21,5 +21,11 @@ export const DATA = {
 export const SEQUENCE = [
   // 1. Activate everything at Level 1 (Unlocks)
   { nodeId: NODE_IDS.ORIGIN, targetLevel: 1 },
+  { nodeId: NODE_IDS.MASTERY_1, targetLevel: 1 },
+  { nodeId: NODE_IDS.MASTERY_2, targetLevel: 1 },
+  { nodeId: NODE_IDS.BOOST_1, targetLevel: 1 },
+  { nodeId: NODE_IDS.BOOST_2, targetLevel: 1 },
+  { nodeId: NODE_IDS.BOOST_3, targetLevel: 1 },
+  { nodeId: NODE_IDS.BOOST_4, targetLevel: 1 },
   // add more actual Hero-specific steps
 ];

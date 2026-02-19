@@ -1,5 +1,54 @@
+import React, { useState, useEffect } from 'react';
 import { SKILL_NODES } from '../data/jobs';
 import './HexaGrid.css';
+
+// Helper component for managing input state independently
+const HexaInput = ({ value, onChange, min, max }) => {
+  const [localValue, setLocalValue] = useState(value.toString());
+
+  // Sync local state if prop value changes (e.g. switching characters)
+  useEffect(() => {
+    setLocalValue(value.toString());
+  }, [value]);
+
+  const handleChange = (e) => {
+    const newVal = e.target.value;
+    setLocalValue(newVal);
+
+    // Only bubble up valid changes immediately if they are within bounds
+    // But don't force update if empty string (allow clear)
+    if (newVal === '') return;
+
+    const numVal = parseInt(newVal, 10);
+    if (!isNaN(numVal) && numVal >= min && numVal <= max) {
+      onChange(numVal);
+    }
+  };
+
+  const handleBlur = () => {
+    let numVal = parseInt(localValue, 10);
+    if (isNaN(numVal)) numVal = 0;
+    
+    // Clamp
+    if (numVal < min) numVal = min;
+    if (numVal > max) numVal = max;
+
+    // Update parent and reset local display to valid number
+    onChange(numVal);
+    setLocalValue(numVal.toString());
+  };
+
+  return (
+    <input
+      type="number"
+      min={min}
+      max={max}
+      value={localValue}
+      onChange={handleChange}
+      onBlur={handleBlur}
+    />
+  );
+};
 
 export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
   const nodes = nodeMetadata ? Object.values(nodeMetadata) : Object.values(SKILL_NODES);
@@ -10,14 +59,7 @@ export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
     return acc;
   }, {});
 
-  const handleLevelChange = (nodeId, valStr) => {
-    let val = parseInt(valStr, 10);
-    if (isNaN(val)) val = 0;
-    
-    // Clamp 0-30
-    if (val < 0) val = 0;
-    if (val > 30) val = 30;
-
+  const handleLevelChange = (nodeId, val) => {
     onUpdate(nodeId, val);
   };
 
@@ -43,11 +85,11 @@ export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
                   {node.displayName || node.label}
                 </span>
                 <div className="node-input-wrapper">
-                  <input
-                    type="number"
-                    min="0" max="30"
+                  <HexaInput
+                    min={0}
+                    max={30}
                     value={currentLevel}
-                    onChange={(e) => handleLevelChange(node.id, e.target.value)}
+                    onChange={(val) => handleLevelChange(node.id, val)}
                   />
                 </div>
                 <div className="progress-bar">
