@@ -6,6 +6,7 @@ import { CharacterCreator } from './components/CharacterCreator';
 import { HexaGrid } from './components/HexaGrid';
 import { PriorityList } from './components/PriorityList';
 import { createCharacter } from './lib/stateSchema';
+import { getJobNodeData, SKILL_NODES } from './data/jobs';
 // CSS imports are global in main.jsx usually, or we can import local styles here if we move them
 import './styles/app.css';
 
@@ -68,6 +69,13 @@ function App() {
   };
 
   const activeChar = state.activeCharacterId ? state.characters[state.activeCharacterId] : null;
+
+  // Derive job-specific data
+  const nodeMetadata = activeChar ? Object.keys(SKILL_NODES).reduce((acc, key) => {
+    const node = SKILL_NODES[key];
+    acc[node.id] = getJobNodeData(activeChar.job, node.id);
+    return acc;
+  }, {}) : {};
 
   const handleHexaUpdate = (nodeId, level) => {
     if (!activeChar) return;
@@ -148,6 +156,7 @@ function App() {
           <HexaGrid 
             progress={activeChar.skillProgress} 
             onUpdate={handleHexaUpdate} 
+            nodeMetadata={nodeMetadata}
           />
         </section>
 
@@ -156,6 +165,7 @@ function App() {
             sequence={activeChar.prioritySequence} 
             progress={activeChar.skillProgress}
             onCompleteStep={handleHexaUpdate} 
+            nodeMetadata={nodeMetadata}
           />
         </section>
       </main>

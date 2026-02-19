@@ -1,4 +1,4 @@
-import { generateDefaultSequence } from '../data/defaultSequence';
+import { getSequence } from '../data/sequences';
 
 export const CURRENT_VERSION = 2;
 
@@ -28,28 +28,6 @@ export const createCharacter = (name, job, level) => {
       b4: 0,
       common: 0
     },
-    prioritySequence: generateDefaultSequence()
-  };
-};
-
-export const migrateV1ToV2 = (v1State) => {
-  // If we had a V1 state, convert it to a character
-  const char = {
-    ...createCharacter(v1State.characterName || 'Migrated Char', 'Hero', v1State.level || 260),
-    skillProgress: {
-      origin: v1State.hexaSkills?.origin || 0,
-      m1: v1State.hexaSkills?.mastery || 0,
-      b1: v1State.hexaSkills?.enhance || 0,
-      common: v1State.hexaSkills?.common || 0,
-      // others default to 0 from createCharacter
-    }
-  };
-
-  return {
-    version: CURRENT_VERSION,
-    characters: {
-      [char.id]: char
-    },
-    activeCharacterId: char.id
+    prioritySequence: getSequence(job)
   };
 };

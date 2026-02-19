@@ -1,8 +1,8 @@
 import { SKILL_NODES } from '../data/jobs';
 import './HexaGrid.css';
 
-export function HexaGrid({ progress, onUpdate }) {
-  const nodes = Object.values(SKILL_NODES);
+export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
+  const nodes = nodeMetadata ? Object.values(nodeMetadata) : Object.values(SKILL_NODES);
 
   const groupedByType = nodes.reduce((acc, n) => {
     if (!acc[n.type]) acc[n.type] = [];
@@ -30,7 +30,18 @@ export function HexaGrid({ progress, onUpdate }) {
 
             return (
               <div key={node.id} className={`hexa-node-card type-${node.type}`}>
-                <span className="node-label">{node.label}</span>
+                <span className="node-label">
+                  {node.icon && (
+                    <span className="node-icon-container">
+                      {node.icon.length > 4 ? (
+                        <img src={node.icon} alt={node.displayName} className="node-icon-img" />
+                      ) : (
+                        node.icon
+                      )}
+                    </span>
+                  )}
+                  {node.displayName || node.label}
+                </span>
                 <div className="node-input-wrapper">
                   <input
                     type="number"
