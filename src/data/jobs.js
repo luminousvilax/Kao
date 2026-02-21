@@ -38,9 +38,16 @@ export const JOB_DATA = {
   "Hero": HeroData
 };
 
+// Data for skills shared by all jobs (e.g. Sol Janus)
+export const COMMON_SKILL_DATA = {
+  [NODE_IDS.COMMON]: { name: "Sol Janus", icon: "🌌" }
+};
+
 export const getJobNodeData = (jobName, nodeId) => {
   const generic = Object.values(SKILL_NODES).find(n => n.id === nodeId);
-  const specific = JOB_DATA[jobName]?.[nodeId];
+  
+  // Priority: Job-specific > Common-shared > Generic/Placeholder
+  const specific = JOB_DATA[jobName]?.[nodeId] || COMMON_SKILL_DATA[nodeId];
 
   return {
     ...generic,

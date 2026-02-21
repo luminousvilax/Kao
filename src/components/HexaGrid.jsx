@@ -76,7 +76,7 @@ export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
                   {node.icon && (
                     <span className="node-icon-container">
                       {node.icon.length > 4 ? (
-                        <img src={node.icon} alt={node.displayName} className="node-icon-img" />
+                        <img src={node.icon} alt={node.displayName} className="node-icon-img" decoding="async" />
                       ) : (
                         node.icon
                       )}

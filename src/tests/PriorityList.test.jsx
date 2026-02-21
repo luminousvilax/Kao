@@ -38,7 +38,7 @@ describe('PriorityList InlineAddForm Logic', () => {
     const mockNodeMetadata = {
         origin: { id: 'origin', name: 'Origin Skill' },
         m1: { id: 'm1', name: 'Mastery 1' },
-        common: { id: 'common', name: 'Coming Soon' }
+        common_1: { id: 'common_1', name: 'Coming Soon' }
     };
 
     it('calculates default level correctly when inserting', () => {
@@ -62,9 +62,9 @@ describe('PriorityList InlineAddForm Logic', () => {
         fireEvent.click(triggers[0]);
 
         // Now InlineAddForm should be visible.
-        // It defaults to 'common' node.
+        // It defaults to 'common_1' node.
         // And level?
-        // Progress for common is 0 (undefined).
+        // Progress for common_1 is 0 (undefined).
         // No previous steps.
         // Default level should be 1.
         expect(screen.getByRole('spinbutton')).toHaveValue(1);

@@ -9,7 +9,7 @@ export const DEFAULT_SEQUENCE = [
   { nodeId: NODE_IDS.BOOST_1, targetLevel: 1 },
   { nodeId: NODE_IDS.MASTERY_2, targetLevel: 1 },
   { nodeId: NODE_IDS.BOOST_2, targetLevel: 1 },
-  { nodeId: NODE_IDS.COMMON, targetLevel: 1 },
+  { nodeId: NODE_IDS.COMMON_1, targetLevel: 1 },
   
   // 2. Early Origin gains
   { nodeId: NODE_IDS.ORIGIN, targetLevel: 9 }, // Big jump at 10 usually, so prep for it

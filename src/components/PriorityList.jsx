@@ -48,10 +48,10 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, seq
   };
 
   // Initialize state using the helper function
-  const [nodeId, setNodeId] = useState(defaultNodeId || 'common');
+  const [nodeId, setNodeId] = useState(defaultNodeId || 'common_1');
   
   // Use string state to allow empty input
-  const [levelStr, setLevelStr] = useState(() => String(calculateMinLevel(defaultNodeId || 'common')));
+  const [levelStr, setLevelStr] = useState(() => String(calculateMinLevel(defaultNodeId || 'common_1')));
   const [error, setError] = useState(null);
 
   const handleNodeChange = (e) => {
@@ -175,6 +175,7 @@ export function PriorityList({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [insertIndex, setInsertIndex] = useState(null);
+  const [showReached, setShowReached] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -236,7 +237,7 @@ export function PriorityList({
             availableNodes={availableNodes}
             onConfirm={handleInsertConfirm}
             onCancel={() => setInsertIndex(null)}
-            defaultNodeId="common"
+            defaultNodeId="common_1"
             sequence={sequence}
             insertIndex={0}
             progress={progress}
@@ -278,7 +279,7 @@ export function PriorityList({
                     availableNodes={availableNodes}
                     onConfirm={handleInsertConfirm}
                     onCancel={() => setInsertIndex(null)}
-                    defaultNodeId="common"
+                    defaultNodeId="common_1"
                     sequence={sequence}
                     insertIndex={nextIndex}
                     progress={progress}
@@ -301,7 +302,19 @@ export function PriorityList({
   return (
     <div className={`priority-list ${isEditing ? 'editing' : ''}`}>
       <div className="priority-header">
-        <h3>{isEditing ? 'Edit Sequence' : 'Recommended Upgrades'}</h3>
+        <div className="priority-title-row">
+            <h3>{isEditing ? 'Edit Sequence' : 'Planned Upgrades'}</h3>
+            {!isEditing && (
+                <label className="show-reached-toggle">
+                    <input 
+                        type="checkbox" 
+                        checked={showReached} 
+                        onChange={(e) => setShowReached(e.target.checked)} 
+                    />
+                    <span>Show Reached</span>
+                </label>
+            )}
+        </div>
         <div className="header-actions">
             {isEditing && isCustom && (
                 <button className="reset-btn" onClick={onResetSequence} title="Reset to default">
@@ -336,6 +349,10 @@ export function PriorityList({
              const uniqueId = `${step.nodeId}-${step.targetLevel}-${idx}`;
              const node = nodeMetadata ? nodeMetadata[step.nodeId] : availableNodes.find(n => n.id === step.nodeId);
              const isDone = progress && (progress[step.nodeId] || 0) >= step.targetLevel;
+
+             if (isDone && !showReached) {
+                 return null;
+             }
 
              return (
                <PriorityItem 

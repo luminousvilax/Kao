@@ -24,7 +24,7 @@ export const createCharacter = (name, job, level) => {
       b2: 0,
       b3: 0,
       b4: 0,
-      common: 0
+      common_1: 0
     }
     // prioritySequence removed to use global defaults unless customized
   };

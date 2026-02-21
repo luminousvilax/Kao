@@ -14,4 +14,9 @@ export default defineConfig({
     setupFiles: './src/setupTests.js',
     css: true,
   },
+  build: {
+    // Default is 4096 (4kb). Set to 0 to force all assets to be separate files.
+    // For 400+ icons, separate files are usually better for caching.
+    assetsInlineLimit: 0, 
+  },
 });
