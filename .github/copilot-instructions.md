@@ -6,44 +6,54 @@ This is a React + Vite single-page application for tracking MapleStory 6th Job (
 
 - **State Management**:
   - The entire app state is a single JSON object managed in `src/App.jsx` and persisted to `localStorage` via `src/lib/storage.js`.
-  - State follows a strict schema defined in `src/lib/stateSchema.js`.
-  - **Pattern**: Because this app is in development, when modifying state structure, no need to implement migrations, just update the schema, delete old schema if necessary to make code clean.
+  - State follows a strict schema defined in `src/lib/stateSchema.js`. Current version is **V2**.
+  - **Pattern**: Updates typically flow up to `App.jsx` handlers (`handleCreateChar`, `handleHexaUpdate`) which then sync to `localStorage` using functional updates for immutability.
 - **Data Model**:
-  - **Characters**: Normalized in a `characters` map (ID -> Object) with a separate `characterOrder` array.
-  - **Skill Nodes**: Hardcoded IDs (`origin`, `h2`, `m1`-`m4`, `b1`-`b4`, `common`) map to integer levels (0-30). See `src/data/jobs.js`.
-  - **Sequences**: An ordered array of `{ nodeId: string, targetLevel: number }` used to guide user upgrades. Logic in `src/data/defaultSequence.js`.
-- **Routing**: Pseudo-routing via `activeCharacterId` in state. Null = List View; UUID = Dashboard View.
+  - **Characters**: Normalized in a `characters` map (ID -> Object) with a separate `characterOrder` array (for sorting).
+  - **Skill Nodes**: Uses standardized constants from `src/data/constants.js` (e.g., `NODE_IDS.ORIGIN`, `NODE_IDS.MASTERY_1`). STRICTLY use these constants, never raw strings.
+  - **Jobs**: Static configuration in `src/data/jobs.js`. Job-specific data (skills, icons, optimization sequences) is modularized in `src/data/job/*.js`. Do not fetch external job data.
+- **Routing**: Virtual routing controlled by `activeCharacterId` in the global state.
+  - `null`: Character List view.
+  - `UUID`: Dashboard/Tracker view.
+
+## Tech Stack & Libraries
+
+- **Framework**: React + Vite.
+- **Drag & Drop**: `@dnd-kit/*` for reordering lists (e.g., priority sequences).
+- **Styling**: Plain CSS with BEM naming conventions. No Tailwind/CSS-in-JS.
+- **Testing**: `vitest` + `react-testing-library`.
 
 ## Development Workflows
 
-- **Run Dev Server**: `npm run dev`
+- **Start Dev Server**: `npm run dev`
 - **Lint & Format**: 
-  - `npm run lint` (ESLint 9 + React Plugins).
+  - `npm run lint` (ESLint 9 + React Plugins). **Strict**: Zero warnings allowed.
   - `npm run format` (Prettier).
   - **Rule**: Always run lint/format before committing. ESLint is configured to be strict about React Hooks dependencies.
+- **Testing**: `npm test` (Vitest). Create tests in `src/tests/` mirroring component structure.
 - **Build**: `npm run build` (outputs to `dist/`, used by GitHub Actions).
-- **Write Tests**: When adding new logic or updating existing logic, create corresponding test files in `src/tests/` and use Vitest + React Testing Library.
-- **Update README**: When adding features or changing user flows, update the README to reflect new instructions or screenshots.
-
-## Key Components & Patterns
-
-- **HexaGrid (`src/components/HexaGrid.jsx`)**:  
-  - The core input matrix. Handles 0-30 clamping for all node types.
-  - **Pattern**: Updates typically flow up to `App.jsx` handlers (`handleHexaUpdate`) which then sync to `localStorage`.
-- **PriorityList (`src/components/PriorityList.jsx`)**:
-  - Displays the "Next Upgrades" checklist.
-  - **Pattern**: Derived state. It compares `prioritySequence` targets vs. current `skillProgress` to determine if a step is "Done".
-- **Styling**:
-  - Plain CSS in `src/styles/` or alongside components.
-  - No CSS-in-JS or Tailwind currently. Use BEM-like naming (e.g., `.char-card`, `.char-card.active`).
 
 ## Project Conventions
 
-1.  **Immutability**: logic in `App.jsx` handlers must use functional state updates (`setData(prev => ({...}))`) to ensure reliability.
-2.  **Job Data**: Defined statically in `src/data/jobs.js`. Do not fetch external APIs for job data; this makes the app offline-capable and static-hostable.
-3.  **Skill IDs**: Use the standardized keys from `SKILL_NODES` in `jobs.js` (`origin`, `b1`, `m1`, etc.) everywhere. Never use display labels ("Origin Skill") as data keys.
+1.  **Immutability**: Logic in `App.jsx` handlers must use functional state updates (`setData(prev => ({...}))`) to ensure reliability.
+2.  **Job Data Isolation**: 
+    - **Do**: Add new jobs by creating `src/data/job/{JobName}.js` and importing it in `src/data/jobs.js`.
+    - **Do not** hardcode job data in components. kept strictly in data files.
+3.  **Skill IDs**: Use the standardized keys from `src/data/constants.js` (`origin`, `b1`, `m1`, etc.) everywhere. Never use display labels ("Origin Skill") as data keys.
+4.  **Asset Management**:
+    - Skill icons live in `src/assets/skills/{jobName}/`.
+    - Reference them in job data files; components should receive resolved paths or emojis.
 
-## Deployment
+## Key Components
+
+- **HexaGrid (`src/components/HexaGrid.jsx`)**:  
+  - The core input matrix. Handles 0-30 clamping for all node types.
+- **PriorityList (`src/components/PriorityList.jsx`)**:
+  - Displays the "Next Upgrades" checklist. Derived from `prioritySequence` vs current `skillProgress`.
+- **CharacterList (`src/components/CharacterList.jsx`)**:
+  - Manages the list of characters and selection/deletion.
+
+## deployment
 
 - **GitHub Pages**: Deploys via `.github/workflows/deploy.yml` on push to `main`.
 - **Base Path**: `vite.config.js` is set to relative base (`./`) to support generic Pages hosting.

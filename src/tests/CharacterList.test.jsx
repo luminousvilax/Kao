@@ -42,7 +42,7 @@ describe('CharacterList', () => {
 
   it('calls onAdd when "Add New" button is clicked', () => {
     render(<CharacterList {...defaultProps} />);
-    const addButton = screen.getByText('+ Add New');
+    const addButton = screen.getByRole('button', { name: /add new/i });
     fireEvent.click(addButton);
     expect(defaultProps.onAdd).toHaveBeenCalled();
   });
