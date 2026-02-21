@@ -38,9 +38,11 @@ export const JOB_DATA = {
   "Hero": HeroData
 };
 
+import solJanusIcon from '../assets/skills/common/sol_janus.png';
+
 // Data for skills shared by all jobs (e.g. Sol Janus)
 export const COMMON_SKILL_DATA = {
-  [NODE_IDS.COMMON]: { name: "Sol Janus", icon: "🌌" }
+  [NODE_IDS.COMMON_1]: { name: "Sol Janus", icon: solJanusIcon },
 };
 
 export const getJobNodeData = (jobName, nodeId) => {
@@ -52,7 +54,7 @@ export const getJobNodeData = (jobName, nodeId) => {
   return {
     ...generic,
     displayName: specific?.name || generic?.label || nodeId,
-    icon: specific?.icon || "⚪" // Placeholder icon
+    icon: specific?.icon || "❓" // Placeholder icon
   };
 };
 
