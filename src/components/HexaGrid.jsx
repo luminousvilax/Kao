@@ -72,17 +72,21 @@ export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
 
             return (
               <div key={node.id} className={`hexa-node-card type-${node.type}`}>
-                <span className="node-label">
-                  {node.icon && (
-                    <span className="node-icon-container">
-                      {node.icon.length > 4 ? (
-                        <img src={node.icon} alt={node.displayName} className="node-icon-img" decoding="async" />
-                      ) : (
-                        node.icon
-                      )}
+                <span className={`node-label ${node.icon && node.icon.length > 4 ? 'has-image-only' : ''}`} title={node.displayName || node.label}>
+                  {node.icon && node.icon.length > 4 ? (
+                    <span className="node-icon-container image-only">
+                      <img src={node.icon} alt={node.displayName || node.label} className="node-icon-img" decoding="async" />
                     </span>
+                  ) : (
+                    <>
+                      {node.icon && (
+                        <span className="node-icon-container">
+                          {node.icon}
+                        </span>
+                      )}
+                      {node.displayName || node.label}
+                    </>
                   )}
-                  {node.displayName || node.label}
                 </span>
                 <div className="node-input-wrapper">
                   <HexaInput

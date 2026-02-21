@@ -9,10 +9,18 @@
   background: #fff;
   border: 1px solid #e5e7eb;
   border-left: 4px solid #9ca3af;
-  padding: 1rem;
-  border-radius: 6px;
+  padding: 0.75rem;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  min-height: 100px;
+  justify-content: space-between;
+}
+
+.hexa-node-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .hexa-node-card.type-skill { border-left-color: #5c22cc; }
@@ -23,10 +31,15 @@
 .node-label {
   display: flex;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   color: #374151;
+  min-height: 32px;
+}
+
+.node-label.has-image-only {
+  justify-content: center;
 }
 
 .node-icon-container {
@@ -39,34 +52,59 @@
   flex-shrink: 0;
 }
 
+.node-icon-container.image-only {
+  width: 32px;
+  height: 32px;
+  margin-right: 0;
+}
+
 .node-icon-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   border-radius: 4px;
+  cursor: help;
 }
-
 
 .node-input-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
 
 .node-input-wrapper input {
-  width: 100%;
-  padding: 0.4rem;
+  width: 48px;
+  padding: 0.35rem 0.25rem;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-weight: 500;
   text-align: center;
+  font-size: 0.9rem;
+  color: #1f2937;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.node-input-wrapper input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #f8fafc;
+}
+
+/* Remove spin buttons */
+.node-input-wrapper input::-webkit-outer-spin-button,
+.node-input-wrapper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .progress-bar {
-  margin-top: 0.5rem;
-  height: 4px;
+  margin-top: 0.75rem;
+  height: 5px;
   background: #f3f4f6;
-  border-radius: 2px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
