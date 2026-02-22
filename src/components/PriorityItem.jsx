@@ -1,7 +1,7 @@
 import React from 'react';
 import './PriorityList.css';
 
-export function PriorityItem({ step, node, isDone, onComplete, onRemove, listeners, attributes, style }) {
+export function PriorityItem({ step, node, isDone, onComplete, onRemove, onEdit, listeners, attributes, style }) {
   if (!node) return null;
 
   return (
@@ -45,6 +45,20 @@ export function PriorityItem({ step, node, isDone, onComplete, onRemove, listene
             onPointerDown={(e) => e.stopPropagation()} // Important for dnd-kit
           >
             {isDone ? '✓' : 'Do'}
+          </button>
+        )}
+
+        {onEdit && (
+          <button 
+            className="edit-step-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            title="Edit Step"
+          >
+            ✎
           </button>
         )}
 

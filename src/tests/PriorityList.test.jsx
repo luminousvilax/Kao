@@ -22,7 +22,12 @@ vi.mock('@dnd-kit/sortable', () => ({
 
 // Mock child components if complex
 vi.mock('../components/PriorityItem', () => ({
-  PriorityItem: ({ step }) => <div>{step.nodeId} Lv.{step.targetLevel}</div>
+  PriorityItem: ({ step, onEdit }) => (
+    <div>
+      {step.nodeId} Lv.{step.targetLevel}
+      {onEdit && <button onClick={onEdit}>Edit Step</button>}
+    </div>
+  )
 }));
 vi.mock('../components/SortableItem', () => ({
   SortableItem: ({ children }) => <div>{children}</div>
@@ -132,5 +137,76 @@ describe('PriorityList InlineAddForm Logic', () => {
         fireEvent.change(input, { target: { value: '21' } });
         fireEvent.click(screen.getByText('✓'));
         expect(screen.getByText(/Must be < Lv.21/)).toBeInTheDocument();
+    });
+
+    it('allows editing an existing node', () => {
+        render(
+            <PriorityList 
+                sequence={mockItems}
+                progress={mockProgress}
+                onUpdateSequence={mockOnUpdateSequence}
+                nodeMetadata={mockNodeMetadata}
+                isCustom={true}
+            />
+        );
+
+        fireEvent.click(screen.getByText('Edit'));
+        
+        // Click edit on the first item (origin Lv.1)
+        const editButtons = screen.getAllByText('Edit Step');
+        fireEvent.click(editButtons[0]);
+
+        // The form should appear with the current values
+        const select = screen.getByRole('combobox');
+        const input = screen.getByRole('spinbutton');
+        
+        expect(select).toHaveValue('origin');
+        expect(input).toHaveValue(1);
+
+        // Change the level to 2
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.click(screen.getByText('✓'));
+
+        // Should call onUpdateSequence with the updated sequence
+        expect(mockOnUpdateSequence).toHaveBeenCalledWith([
+            { nodeId: 'origin', targetLevel: 2 },
+            { nodeId: 'm1', targetLevel: 1 }
+        ]);
+    });
+
+    it('validates level constraints when editing an existing node', () => {
+        const sequenceWithMultiple = [
+            { nodeId: 'origin', targetLevel: 1 },
+            { nodeId: 'm1', targetLevel: 1 },
+            { nodeId: 'origin', targetLevel: 10 }
+        ];
+
+        render(
+            <PriorityList 
+                sequence={sequenceWithMultiple}
+                progress={{ origin: 2, m1: 0 }}
+                onUpdateSequence={mockOnUpdateSequence}
+                nodeMetadata={mockNodeMetadata}
+                isCustom={true}
+            />
+        );
+
+        fireEvent.click(screen.getByText('Edit'));
+        
+        // Edit the first origin node
+        const editButtons = screen.getAllByText('Edit Step');
+        fireEvent.click(editButtons[0]);
+
+        const input = screen.getByRole('spinbutton');
+
+        // Try to set level lower than current progress (2)
+        fireEvent.change(input, { target: { value: '1' } });
+        fireEvent.click(screen.getByText('✓'));
+        expect(screen.getByText(/Must be > Lv.2/)).toBeInTheDocument();
+
+        // Try to set level higher than next occurrence (10)
+        fireEvent.change(input, { target: { value: '11' } });
+        fireEvent.click(screen.getByText('✓'));
+        expect(screen.getByText(/Must be < Lv.10/)).toBeInTheDocument();
     });
 });

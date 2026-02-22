@@ -32,9 +32,12 @@ function InsertTrigger({ onInsert, isActive }) {
   );
 }
 
-function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, sequence, insertIndex, progress }) {
+function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, defaultLevel, isEdit, sequence, insertIndex, progress }) {
   // Use Helper to calculate min level for a given nodeId
   const calculateMinLevel = (targetNodeId) => {
+    if (isEdit && targetNodeId === defaultNodeId && defaultLevel) {
+      return defaultLevel;
+    }
     let minLevel = progress && progress[targetNodeId] ? progress[targetNodeId] : 0;
     
     // Check previous occurrences in sequence
@@ -108,7 +111,8 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, seq
     }
 
     // Search forwards for same skill (if inserting in middle)
-    for (let i = insertIndex; i < sequence.length; i++) {
+    const startIndex = isEdit ? insertIndex + 1 : insertIndex;
+    for (let i = startIndex; i < sequence.length; i++) {
         if (sequence[i].nodeId === nodeId) {
             nextLimit = sequence[i].targetLevel;
             break;
@@ -179,6 +183,7 @@ export function PriorityList({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [insertIndex, setInsertIndex] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
   const [showReached, setShowReached] = useState(false);
 
   const sensors = useSensors(
@@ -197,6 +202,8 @@ export function PriorityList({
       if (oldIndex !== -1 && newIndex !== -1) {
         const newSequence = arrayMove(sequence, oldIndex, newIndex);
         onUpdateSequence(newSequence);
+        setEditIndex(null);
+        setInsertIndex(null);
       }
     }
   };
@@ -204,6 +211,8 @@ export function PriorityList({
   const handleRemoveStep = (indexToRemove) => {
     const newSequence = sequence.filter((_, idx) => idx !== indexToRemove);
     onUpdateSequence(newSequence);
+    setEditIndex(null);
+    setInsertIndex(null);
   };
 
   const handleInsertConfirm = (nodeId, level) => {
@@ -217,9 +226,29 @@ export function PriorityList({
     setInsertIndex(null);
   };
 
+  const handleEditConfirm = (nodeId, level) => {
+    if (editIndex === null) return;
+    
+    const newStep = { nodeId, targetLevel: parseInt(level, 10) };
+    const newSequence = [...sequence];
+    newSequence[editIndex] = newStep;
+    
+    onUpdateSequence(newSequence);
+    setEditIndex(null);
+  };
+
+  const handleResetSequence = () => {
+    if (onResetSequence) {
+        onResetSequence();
+    }
+    setEditIndex(null);
+    setInsertIndex(null);
+  };
+
   const toggleEdit = () => {
     setIsEditing(!isEditing);
     setInsertIndex(null);
+    setEditIndex(null);
   };
 
   // Generate stable IDs for Drag and Drop
@@ -251,7 +280,10 @@ export function PriorityList({
       combinedList.push(
         <InsertTrigger 
             key="trigger-0" 
-            onInsert={() => setInsertIndex(0)} 
+            onInsert={() => {
+                setInsertIndex(0);
+                setEditIndex(null);
+            }} 
             isActive={false}
         />
       );
@@ -263,16 +295,37 @@ export function PriorityList({
         const node = nodeMetadata ? nodeMetadata[step.nodeId] : availableNodes.find(n => n.id === step.nodeId);
         
         // Render current item
-        combinedList.push(
-            <SortableItem key={uniqueId} id={uniqueId}>
-                <PriorityItem 
-                    step={step}
-                    node={node}
-                    isDone={false}
-                    onRemove={() => handleRemoveStep(idx)}
+        if (editIndex === idx) {
+            combinedList.push(
+                <InlineAddForm 
+                    key={`edit-form-${idx}`}
+                    availableNodes={availableNodes}
+                    onConfirm={handleEditConfirm}
+                    onCancel={() => setEditIndex(null)}
+                    defaultNodeId={step.nodeId}
+                    defaultLevel={step.targetLevel}
+                    isEdit={true}
+                    sequence={sequence}
+                    insertIndex={idx}
+                    progress={progress}
                 />
-            </SortableItem>
-        );
+            );
+        } else {
+            combinedList.push(
+                <SortableItem key={uniqueId} id={uniqueId}>
+                    <PriorityItem 
+                        step={step}
+                        node={node}
+                        isDone={false}
+                        onRemove={() => handleRemoveStep(idx)}
+                        onEdit={() => {
+                            setEditIndex(idx);
+                            setInsertIndex(null);
+                        }}
+                    />
+                </SortableItem>
+            );
+        }
 
         // Render trigger AFTER this item (index idx + 1)
         const nextIndex = idx + 1;
@@ -293,7 +346,10 @@ export function PriorityList({
             combinedList.push(
                 <InsertTrigger 
                     key={`trigger-${nextIndex}`}
-                    onInsert={() => setInsertIndex(nextIndex)} 
+                    onInsert={() => {
+                        setInsertIndex(nextIndex);
+                        setEditIndex(null);
+                    }} 
                     isActive={false}
                 />
             );
@@ -321,7 +377,7 @@ export function PriorityList({
         </div>
         <div className="header-actions">
             {isEditing && isCustom && (
-                <button className="reset-btn" onClick={onResetSequence} title="Reset to default">
+                <button className="reset-btn" onClick={handleResetSequence} title="Reset to default">
                     Reset
                 </button>
             )}

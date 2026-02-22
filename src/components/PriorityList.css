@@ -289,6 +289,22 @@
   border-radius: 4px;
 }
 
+.edit-step-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+.edit-step-btn:hover {
+  background-color: #dbeafe;
+  border-radius: 4px;
+}
+
 .priority-empty {
   text-align: center;
   color: #6b7280;
