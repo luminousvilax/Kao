@@ -44,11 +44,15 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, seq
             break;
         }
     }
-    return Math.min(30, minLevel + 1);
+    const node = availableNodes.find(n => n.id === targetNodeId);
+    const nodeMax = node?.type === 'stat' ? 20 : 30;
+    return Math.min(nodeMax, minLevel + 1);
   };
 
   // Initialize state using the helper function
   const [nodeId, setNodeId] = useState(defaultNodeId || 'common_1');
+  const selectedNode = availableNodes.find(n => n.id === nodeId);
+  const maxLevel = selectedNode?.type === 'stat' ? 20 : 30;
   
   // Use string state to allow empty input
   const [levelStr, setLevelStr] = useState(() => String(calculateMinLevel(defaultNodeId || 'common_1')));
@@ -76,7 +80,7 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, seq
         let val = parseInt(levelStr, 10);
         if (isNaN(val)) val = 1;
         if (val < 1) val = 1;
-        if (val > 30) val = 30;
+        if (val > maxLevel) val = maxLevel;
         setLevelStr(String(val));
     }
   };
@@ -93,7 +97,7 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, seq
     
     // Find neighbors for validation
     let prevLimit = 0;
-    let nextLimit = 31; // Hexa max is 30, so < 31 is valid
+    let nextLimit = maxLevel + 1;
 
     // Search backwards for same skill
     for (let i = insertIndex - 1; i >= 0; i--) {
@@ -149,7 +153,7 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, seq
         <input 
             type="number" 
             min="1" 
-            max="30" 
+            max={maxLevel} 
             value={levelStr} 
             onChange={handleLevelChange}
             onBlur={handleLevelBlur}

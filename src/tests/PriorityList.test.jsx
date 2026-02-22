@@ -96,4 +96,41 @@ describe('PriorityList InlineAddForm Logic', () => {
 
         expect(screen.getByRole('spinbutton')).toHaveValue(2);
     });
+
+    it('enforces max level 20 for stat nodes', () => {
+        const statMetadata = {
+            ...mockNodeMetadata,
+            stat_1: { id: 'stat_1', type: 'stat', name: 'Hexa Stat 1' }
+        };
+        render(
+            <PriorityList 
+                sequence={[]}
+                progress={{}}
+                onUpdateSequence={mockOnUpdateSequence}
+                nodeMetadata={statMetadata}
+                isCustom={true}
+            />
+        );
+
+        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Insert Step Here'));
+
+        const select = screen.getByRole('combobox');
+        fireEvent.change(select, { target: { value: 'stat_1' } });
+
+        const input = screen.getByRole('spinbutton');
+        // Check HTML attribute
+        expect(input).toHaveAttribute('max', '20');
+
+        // Test clamping on blur
+        fireEvent.change(input, { target: { value: '25' } });
+        fireEvent.blur(input);
+        expect(input).toHaveValue(20);
+
+        // Test validation error for values above 20
+        // We need to bypass the browser's number input restriction for the test to check application logic
+        fireEvent.change(input, { target: { value: '21' } });
+        fireEvent.click(screen.getByText('✓'));
+        expect(screen.getByText(/Must be < Lv.21/)).toBeInTheDocument();
+    });
 });

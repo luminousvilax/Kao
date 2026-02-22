@@ -11,6 +11,9 @@ export const SKILL_NODES = {
   BOOST_3: { id: 'b3', label: 'Boost III (B3)', type: 'boost' },
   BOOST_4: { id: 'b4', label: 'Boost IV (B4)', type: 'boost' },
   COMMON_1: { id: 'common_1', label: 'Sol Janus', type: 'common' },
+  STAT_1: { id: 'stat_1', label: 'HEXA Stat I', type: 'stat' },
+  STAT_2: { id: 'stat_2', label: 'HEXA Stat II', type: 'stat' },
+  STAT_3: { id: 'stat_3', label: 'HEXA Stat III', type: 'stat' },
 };
 
 // Helper list for constants

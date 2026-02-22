@@ -51,7 +51,8 @@ const HexaInput = ({ value, onChange, min, max }) => {
 };
 
 export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
-  const nodes = nodeMetadata ? Object.values(nodeMetadata) : Object.values(SKILL_NODES);
+  const nodes = (nodeMetadata ? Object.values(nodeMetadata) : Object.values(SKILL_NODES))
+    .filter((n) => n.type !== 'stat');
 
   const groupedByType = nodes.reduce((acc, n) => {
     if (!acc[n.type]) acc[n.type] = [];
