@@ -105,7 +105,7 @@ describe('App Import/Export', () => {
     expect(readAsTextSpy).toHaveBeenCalled();
 
     // 4. Verify Confirm Dialog
-    expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('overwrite'));
+    expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('OVERWRITE'));
 
     // 5. Verify UI Update (Wait for re-render)
     await waitFor(() => {

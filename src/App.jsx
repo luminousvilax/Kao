@@ -225,7 +225,7 @@ function App() {
   };
 
   const handleImportData = (importedState) => {
-    if (window.confirm('Importing data will overwrite your current data. Are you sure you want to continue?')) {
+    if (window.confirm('Importing data will OVERWRITE your current data.\nAre you sure you want to continue?')) {
       setState(importedState);
     }
   };

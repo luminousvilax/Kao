@@ -66,7 +66,7 @@ function SequenceSettingsMenu({ isEditing, toggleEdit, isCustom, onResetSequence
           }
 
           if (isCustom) {
-            if (!window.confirm('This character already has a custom sequence. Overwrite it?')) {
+            if (!window.confirm('This character already has a custom sequence.\nOverwrite it?')) {
               return;
             }
           }
