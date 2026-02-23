@@ -1,11 +1,22 @@
 import { useState } from 'react';
-import { JOBS } from '../data/jobs'; // array of strings
+import { JOB_GROUPS } from '../data/jobs';
 import './CharacterCreator.css';
 
 export function CharacterCreator({ onCreate, onCancel }) {
   const [name, setName] = useState('');
-  const [job, setJob] = useState(JOBS[0]);
+  const [jobGroup, setJobGroup] = useState('All');
+  const [job, setJob] = useState(Object.values(JOB_GROUPS)[0][0]);
   const [level, setLevel] = useState(260);
+
+  const handleGroupChange = (e) => {
+    const group = e.target.value;
+    setJobGroup(group);
+    if (group === 'All') {
+      setJob(Object.values(JOB_GROUPS)[0][0]);
+    } else {
+      setJob(JOB_GROUPS[group][0]);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,11 +42,31 @@ export function CharacterCreator({ onCreate, onCancel }) {
           </div>
 
           <div className="form-group">
+            <label>Job Group</label>
+            <select value={jobGroup} onChange={handleGroupChange}>
+              <option value="All">All Groups</option>
+              {Object.keys(JOB_GROUPS).map(group => (
+                <option key={group} value={group}>{group}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
             <label>Job / Class</label>
             <select value={job} onChange={e => setJob(e.target.value)}>
-              {JOBS.map(j => (
-                <option key={j} value={j}>{j}</option>
-              ))}
+              {jobGroup === 'All' ? (
+                Object.entries(JOB_GROUPS).map(([groupName, jobs]) => (
+                  <optgroup key={groupName} label={groupName}>
+                    {jobs.map(j => (
+                      <option key={j} value={j}>{j}</option>
+                    ))}
+                  </optgroup>
+                ))
+              ) : (
+                JOB_GROUPS[jobGroup].map(j => (
+                  <option key={j} value={j}>{j}</option>
+                ))
+              )}
             </select>
           </div>
 

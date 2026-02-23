@@ -36,6 +36,7 @@
   margin-bottom: 0.75rem;
   color: #374151;
   min-height: 32px;
+  white-space: pre-line;
 }
 
 .node-label.has-image-only {

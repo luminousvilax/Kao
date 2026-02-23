@@ -9,7 +9,9 @@
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:sequences": "vitest run src/tests/JobSequences.test.js",
+    "test:job": "vitest run src/tests/JobSequences.test.js -t"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

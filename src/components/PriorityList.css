@@ -231,6 +231,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   gap: 0.5rem;
+  white-space: pre-line;
 }
 
 .step-icon-container {

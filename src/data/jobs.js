@@ -1,41 +1,54 @@
 import { SKILL_NODES, NODE_IDS } from './constants';
 
 // Known MapleStory job branches/classes for the dropdown
-export const JOBS = [
-  // Warriors
-  "Hero", "Paladin", "Dark Knight",
-  "Dawn Warrior", "Mihile",
-  "Aran", "Blaster", "Demon Slayer", "Demon Avenger",
-  "Kaiser", "Adele", "Zero", "Hayato",
+export const JOB_GROUPS = {
+  "Explorers": [
+    "Hero", "Paladin", "Dark Knight",
+    "Arch Mage (Fire/Poison)", "Arch Mage (Ice/Lightning)", "Bishop",
+    "Bowmaster", "Marksman", "Pathfinder",
+    "Night Lord", "Shadower", "Dual Blade",
+    "Buccaneer", "Corsair", "Cannoneer"
+  ],
+  "Cygnus Knights": [
+    "Dawn Warrior", "Blaze Wizard", "Wind Archer", "Night Walker", "Thunder Breaker", "Mihile"
+  ],
+  "Heroes": [
+    "Aran", "Evan", "Luminous", "Mercedes", "Phantom", "Shade"
+  ],
+  "Resistance": [
+    "Blaster", "Battle Mage", "Wild Hunter", "Mechanic", "Demon Slayer", "Demon Avenger", "Xenon"
+  ],
+  "Nova": [
+    "Kaiser", "Kain", "Cadena", "Angelic Buster"
+  ],
+  "Flora": [
+    "Adele", "Illium", "Khali", "Ark"
+  ],
+  "Anima": [
+    "Ren", "Lara", "Hoyoung"
+  ],
+  "Sengoku": [
+    "Hayato", "Kanna"
+  ],
+  "Jianghu": [
+    "Lynn", "Mo Xuan" 
+  ],
+  "Other": [
+    "Zero", "Kinesis"
+  ]
+};
 
-  // Magicians
-  "Arch Mage (Fire/Poison)", "Arch Mage (Ice/Lightning)", "Bishop",
-  "Blaze Wizard",
-  "Evan", "Luminous", "Battle Mage",
-  "Kinesis", "Illium", "Lara", "Beast Tamer", "Lynn", "Kanna",
-
-  // Bowmen
-  "Bowmaster", "Marksman", "Pathfinder",
-  "Wind Archer",
-  "Mercedes", "Wild Hunter",
-  "Kain",
-
-  // Thieves
-  "Night Lord", "Shadower", "Dual Blade",
-  "Night Walker",
-  "Phantom", "Cadena", "Kali", "Hoyoung",
-
-  // Pirates
-  "Buccaneer", "Corsair", "Cannoneer",
-  "Thunder Breaker",
-  "Shade", "Mechanic", "Xenon", "Angelic Buster", "Ark"
-].sort();
+export const JOBS = Object.values(JOB_GROUPS).flat();
 
 import { DATA as HeroData } from './job/Hero';
+import { DATA as HayatoData } from './job/Hayato';
+import { DATA as RenData } from './job/Ren';
 
 // Expanded metadata for specific jobs
 export const JOB_DATA = {
-  "Hero": HeroData
+  "Hero": HeroData,
+  "Hayato": HayatoData,
+  "Ren": RenData,
 };
 
 import solJanusIcon from '../assets/skills/common/sol_janus.png';
