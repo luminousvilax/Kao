@@ -224,21 +224,19 @@ function App() {
     });
   };
 
+  const hasChars = Object.keys(state.characters || {}).length > 0;
+
   const handleImportData = (importedState) => {
-    if (window.confirm('Importing data will OVERWRITE your current data.\nAre you sure you want to continue?')) {
-      setState(importedState);
+    if (hasChars) {
+      if (!window.confirm('Importing data will OVERWRITE your current data.\nAre you sure you want to continue?'))
+        return;
     }
+    setState(importedState);
   };
 
   const handleBack = () => {
     setState((prev) => ({ ...prev, activeCharacterId: null }));
   };
-
-  // -- Render --
-
-  if (showCreator) {
-    return <CharacterCreator onCancel={() => setShowCreator(false)} onCreate={handleCreateChar} />;
-  }
 
   // If we have characters but no active one selected, show list
   // If we have NO characters at all, CharacterList handles the empty state
@@ -263,6 +261,7 @@ function App() {
             onUpdate={handleUpdateChar}
           />
         </main>
+        {showCreator && <CharacterCreator onCancel={() => setShowCreator(false)} onCreate={handleCreateChar} />}
       </div>
     );
   }
@@ -307,6 +306,7 @@ function App() {
           />
         </section>
       </main>
+      {showCreator && <CharacterCreator onCancel={() => setShowCreator(false)} onCreate={handleCreateChar} />}
     </div>
   );
 }

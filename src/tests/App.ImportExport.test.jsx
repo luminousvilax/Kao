@@ -2,6 +2,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from '../App';
+import { loadState } from '../lib/storage';
+
 // Mock storage before loading App
 vi.mock('../lib/storage', async () => {
   return {
@@ -143,6 +145,55 @@ describe('App Import/Export', () => {
     // 2. Verify Alert
     await waitFor(() => {
       expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Invalid data'));
+    });
+  });
+
+  it('skips confirmation warning if no characters exist', async () => {
+    // Override loadState to return empty
+    loadState.mockReturnValueOnce({
+      version: 2,
+      characters: {},
+      characterOrder: [],
+      activeCharacterId: null,
+    });
+
+    const mockData = {
+      version: 2,
+      characters: {
+        newChar: { id: 'newChar', name: 'Newbie', job: 'Hero', level: 260, skillProgress: {} },
+      },
+      activeCharacterId: 'newChar',
+      characterOrder: ['newChar'],
+    };
+    const fileContent = JSON.stringify(mockData);
+
+    class MockFileReader {
+      constructor() {
+        this.onload = null;
+      }
+      readAsText() {
+        if (this.onload) {
+          this.onload({ target: { result: fileContent } });
+        }
+      }
+    }
+    global.FileReader = MockFileReader;
+
+    render(<App />);
+
+    // 1. Trigger Import
+    const settingsBtn = screen.getByTitle('Settings');
+    fireEvent.click(settingsBtn);
+
+    const fileInput = screen.getAllByDisplayValue('').find((el) => el.type === 'file');
+    const file = new File([fileContent], 'data.json', { type: 'application/json' });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    // 2. Verify Confirm NOT called and Import happens
+    await waitFor(() => {
+      expect(window.confirm).not.toHaveBeenCalled();
+      expect(screen.getByText('Newbie')).toBeInTheDocument();
     });
   });
 });
