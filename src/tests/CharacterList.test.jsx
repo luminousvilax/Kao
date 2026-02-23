@@ -68,4 +68,47 @@ describe('CharacterList', () => {
     const bishopCard = screen.getByText('MyBishop').closest('.char-card');
     expect(bishopCard).toHaveClass('active');
   });
+
+  it('enters edit mode when edit button is clicked', () => {
+    render(<CharacterList {...defaultProps} />);
+    const editButtons = screen.getAllByTitle('Edit Character');
+    fireEvent.click(editButtons[0]);
+    
+    expect(screen.getByPlaceholderText('Character Name')).toHaveValue('MyHero');
+    expect(screen.getByPlaceholderText('Level')).toHaveValue(260);
+    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+  });
+
+  it('calls onUpdate with new values when save is clicked', () => {
+    const onUpdateMock = vi.fn();
+    render(<CharacterList {...defaultProps} onUpdate={onUpdateMock} />);
+    
+    const editButtons = screen.getAllByTitle('Edit Character');
+    fireEvent.click(editButtons[0]);
+    
+    const nameInput = screen.getByPlaceholderText('Character Name');
+    const levelInput = screen.getByPlaceholderText('Level');
+    
+    fireEvent.change(nameInput, { target: { value: 'NewHeroName' } });
+    fireEvent.change(levelInput, { target: { value: '265' } });
+    
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    fireEvent.click(saveButton);
+    
+    expect(onUpdateMock).toHaveBeenCalledWith('char-1', { name: 'NewHeroName', level: 265 });
+  });
+
+  it('cancels edit mode when cancel is clicked', () => {
+    render(<CharacterList {...defaultProps} />);
+    
+    const editButtons = screen.getAllByTitle('Edit Character');
+    fireEvent.click(editButtons[0]);
+    
+    const cancelButton = screen.getByRole('button', { name: 'Cancel' });
+    fireEvent.click(cancelButton);
+    
+    expect(screen.queryByPlaceholderText('Character Name')).not.toBeInTheDocument();
+    expect(screen.getByText('MyHero')).toBeInTheDocument();
+  });
 });

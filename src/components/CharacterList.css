@@ -74,6 +74,63 @@
   transition: all 0.2s;
 }
 
+.btn-edit {
+  position: absolute;
+  top: 0.5rem;
+  right: 2rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.char-card:hover .btn-edit {
+  opacity: 0.6;
+}
+
+.btn-edit:hover {
+  opacity: 1 !important;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.char-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.char-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.char-edit-field span {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.char-edit-form input {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.char-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
 .btn-delete:hover {
   opacity: 1 !important;
   background: #fee2e2;

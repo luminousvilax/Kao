@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import './CharacterList.css';
 
-export function CharacterList({ characters, characterOrder, activeId, onSelect, onDelete, onSwap, onAdd }) {
+export function CharacterList({ characters, characterOrder, activeId, onSelect, onDelete, onSwap, onAdd, onUpdate }) {
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const longPressTimer = useRef(null);
   const [isReordering, setIsReordering] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', level: '' });
 
   useEffect(() => {
     return () => clearTimeout(longPressTimer.current);
@@ -64,6 +66,25 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
     setIsReordering(false);
   };
 
+  const handleEditClick = (e, char) => {
+    e.stopPropagation();
+    setEditingId(char.id);
+    setEditForm({ name: char.name, level: char.level });
+  };
+
+  const handleEditSave = (e, id) => {
+    e.stopPropagation();
+    if (editForm.name.trim() && editForm.level) {
+      onUpdate(id, { name: editForm.name.trim(), level: Number(editForm.level) });
+    }
+    setEditingId(null);
+  };
+
+  const handleEditCancel = (e) => {
+    e.stopPropagation();
+    setEditingId(null);
+  };
+
   return (
     <div className="character-list-container">
       <header className="list-header">
@@ -99,23 +120,66 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerUp}
           >
-            <div className="char-info">
-              <h3>{char.name}</h3>
-              <span className="char-job">{char.job}</span>
-            </div>
-            <div className="char-meta">
-              <span>Lv. {char.level}</span>
-              <button 
-                className="btn-delete" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(char.id);
-                }}
-                title="Delete Character"
-              >
-                &times;
-              </button>
-            </div>
+            {editingId === char.id ? (
+              <div className="char-edit-form" onClick={(e) => e.stopPropagation()}>
+                <label className="char-edit-field">
+                  <span>Name</span>
+                  <input 
+                    type="text" 
+                    value={editForm.name} 
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    onKeyDown={(e) => e.key === 'Enter' && handleEditSave(e, char.id)}
+                    placeholder="Character Name"
+                    autoFocus
+                  />
+                </label>
+                <label className="char-edit-field">
+                  <span>Level</span>
+                  <input 
+                    type="number" 
+                    value={editForm.level} 
+                    onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
+                    onKeyDown={(e) => e.key === 'Enter' && handleEditSave(e, char.id)}
+                    placeholder="Level"
+                    min="260"
+                    max="300"
+                  />
+                </label>
+                <div className="char-edit-actions">
+                  <button className="btn-small btn-primary" onClick={(e) => handleEditSave(e, char.id)}>Save</button>
+                  <button className="btn-small" onClick={handleEditCancel}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="char-info">
+                  <h3>{char.name}</h3>
+                  <span className="char-job">{char.job}</span>
+                </div>
+                <div className="char-meta">
+                  <span>Lv. {char.level}</span>
+                  <button 
+                    className="btn-edit" 
+                    onClick={(e) => handleEditClick(e, char)}
+                    title="Edit Character"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                    </svg>
+                  </button>
+                  <button 
+                    className="btn-delete" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(char.id);
+                    }}
+                    title="Delete Character"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>

@@ -69,6 +69,19 @@ function App() {
     });
   };
 
+  const handleUpdateChar = (id, updates) => {
+    setState(prev => ({
+      ...prev,
+      characters: {
+        ...prev.characters,
+        [id]: {
+          ...prev.characters[id],
+          ...updates
+        }
+      }
+    }));
+  };
+
   const activeChar = state.activeCharacterId ? state.characters[state.activeCharacterId] : null;
 
   // Derive job-specific data
@@ -165,6 +178,7 @@ function App() {
             onDelete={handleDeleteChar}
             onSwap={handleSwapChars}
             onAdd={() => setShowCreator(true)}
+            onUpdate={handleUpdateChar}
           />
         </main>
       </div>
