@@ -19,6 +19,90 @@ header h1 {
   color: #2c3e50;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.settings-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.settings-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.settings-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.settings-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  min-width: 180px;
+  width: max-content;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.settings-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.settings-dropdown button svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.settings-dropdown button:hover {
+  background-color: #f3f4f6;
+}
+
+.settings-dropdown button.reset-option {
+  color: #ef4444;
+  border-top: 1px solid #e5e7eb;
+}
+
+.settings-dropdown button.reset-option:hover {
+  background-color: #fef2f2;
+}
+
 section.tracker-card {
   background: #fdfdfd;
   border: 1px solid #e0e0e0;

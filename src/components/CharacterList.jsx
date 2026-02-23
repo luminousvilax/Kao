@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './CharacterList.css';
+import { Icons } from './Icons';
 
 export function CharacterList({ characters, characterOrder, activeId, onSelect, onDelete, onSwap, onAdd, onUpdate }) {
   const [draggedIndex, setDraggedIndex] = useState(null);
@@ -93,10 +94,7 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
           {isReordering && <span className="reorder-hint">Drag to reorder</span>}
         </div>
         <button onClick={onAdd} className="btn-small">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+          <Icons.Plus />
           Add New
         </button>
       </header>
@@ -163,9 +161,7 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
                     onClick={(e) => handleEditClick(e, char)}
                     title="Edit Character"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                    </svg>
+                    <Icons.Edit size={14} />
                   </button>
                   <button 
                     className="btn-delete" 

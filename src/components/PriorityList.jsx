@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   DndContext, 
   closestCenter,
@@ -17,7 +17,141 @@ import {
 import { SKILL_NODES, SKILL_NAME_TRUNCATE_LIMIT } from '../data/jobs';
 import { PriorityItem } from './PriorityItem';
 import { SortableItem } from './SortableItem';
+import { Icons } from './Icons';
 import './PriorityList.css';
+
+function SequenceSettingsMenu({ 
+  isEditing, 
+  toggleEdit, 
+  isCustom, 
+  onResetSequence, 
+  sequence, 
+  job, 
+  onImportSequence 
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleExport = () => {
+    const exportData = {
+      job: job,
+      sequence: sequence
+    };
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${job.toLowerCase()}-sequence.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setIsOpen(false);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+    setIsOpen(false);
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (importedData && importedData.job && importedData.sequence) {
+          if (importedData.job !== job) {
+            alert(`Cannot import sequence. This sequence is for ${importedData.job}, but current character is ${job}.`);
+            return;
+          }
+          
+          if (isCustom) {
+            if (!window.confirm('This character already has a custom sequence. Overwrite it?')) {
+              return;
+            }
+          }
+          
+          onImportSequence(importedData.sequence);
+        } else {
+          alert('Invalid sequence data format.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to parse JSON file.');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  return (
+    <div className="settings-menu-container" ref={menuRef}>
+      {isEditing ? (
+        <button 
+          className="edit-btn" 
+          onClick={() => toggleEdit()}
+        >
+          Done
+        </button>
+      ) : (
+        <>
+          <button 
+            className="settings-btn" 
+            onClick={() => setIsOpen(!isOpen)}
+            title="Sequence Options"
+          >
+            <Icons.Settings />
+          </button>
+          
+          {isOpen && (
+            <div className="settings-dropdown">
+              <button onClick={() => { toggleEdit(); setIsOpen(false); }}>
+                <Icons.Edit />
+                Edit Sequence
+              </button>
+              <button onClick={handleImportClick}>
+                <Icons.Upload />
+                Import Sequence
+              </button>
+              <button onClick={handleExport}>
+                <Icons.Download />
+                Export Sequence
+              </button>
+              {isCustom && (
+                <button onClick={() => { onResetSequence(); setIsOpen(false); }} className="reset-option">
+                  <Icons.Reset />
+                  Restore Default
+                </button>
+              )}
+            </div>
+          )}
+        </>
+      )}
+      <input
+        type="file"
+        accept=".json"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+    </div>
+  );
+}
 
 function InsertTrigger({ onInsert, isActive }) {
   return (
@@ -211,7 +345,8 @@ export function PriorityList({
   nodeMetadata,
   isCustom,
   onUpdateSequence,
-  onResetSequence
+  onResetSequence,
+  job
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [insertIndex, setInsertIndex] = useState(null);
@@ -408,14 +543,15 @@ export function PriorityList({
             )}
         </div>
         <div className="header-actions">
-            {isEditing && isCustom && (
-                <button className="reset-btn" onClick={handleResetSequence} title="Reset to default">
-                    Reset
-                </button>
-            )}
-            <button className="edit-btn" onClick={toggleEdit}>
-                {isEditing ? 'Done' : 'Edit'}
-            </button>
+            <SequenceSettingsMenu 
+              isEditing={isEditing}
+              toggleEdit={toggleEdit}
+              isCustom={isCustom}
+              onResetSequence={handleResetSequence}
+              sequence={sequence}
+              job={job}
+              onImportSequence={onUpdateSequence}
+            />
         </div>
       </div>
 

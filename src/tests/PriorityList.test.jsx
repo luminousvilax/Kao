@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest';
 import { PriorityList } from '../components/PriorityList';
 import { SKILL_NAME_TRUNCATE_LIMIT } from '../data/jobs';
 
@@ -58,7 +58,9 @@ describe('PriorityList InlineAddForm Logic', () => {
             />
         );
 
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
+
         const triggers = screen.getAllByTitle('Insert Step Here');
         fireEvent.click(triggers[0]);
 
@@ -99,7 +101,9 @@ describe('PriorityList InlineAddForm Logic', () => {
             />
         );
 
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
+
         const triggers = screen.getAllByTitle('Insert Step Here');
         fireEvent.click(triggers[0]);
 
@@ -126,7 +130,8 @@ describe('PriorityList InlineAddForm Logic', () => {
         );
 
         // Click Edit to show insert triggers
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
 
         // Click the first insert trigger (at index 0)
         // The trigger renders as a div with class insert-trigger. 
@@ -154,7 +159,9 @@ describe('PriorityList InlineAddForm Logic', () => {
             />
         );
 
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
+
         const triggers = screen.getAllByTitle('Insert Step Here');
         fireEvent.click(triggers[0]); // Insert at start
 
@@ -185,7 +192,8 @@ describe('PriorityList InlineAddForm Logic', () => {
             />
         );
 
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
         fireEvent.click(screen.getByTitle('Insert Step Here'));
 
         const select = screen.getByRole('combobox');
@@ -218,7 +226,8 @@ describe('PriorityList InlineAddForm Logic', () => {
             />
         );
 
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
         
         // Click edit on the first item (origin Lv.1)
         const editButtons = screen.getAllByText('Edit Step');
@@ -259,7 +268,8 @@ describe('PriorityList InlineAddForm Logic', () => {
             />
         );
 
-        fireEvent.click(screen.getByText('Edit'));
+        fireEvent.click(screen.getByTitle('Sequence Options'));
+        fireEvent.click(screen.getByText('Edit Sequence'));
         
         // Edit the first origin node
         const editButtons = screen.getAllByText('Edit Step');
@@ -278,3 +288,117 @@ describe('PriorityList InlineAddForm Logic', () => {
         expect(screen.getByText(/Must be < Lv.10/)).toBeInTheDocument();
     });
 });
+
+describe('Sequence Settings Menu', () => {
+    const mockOnUpdateSequence = vi.fn();
+    const mockOnResetSequence = vi.fn();
+    const mockJob = 'Hayato';
+    const mockSequence = [{ nodeId: 'origin', targetLevel: 1 }];
+    
+    // Mock URL methods
+    beforeAll(() => {
+        global.URL.createObjectURL = vi.fn();
+        global.URL.revokeObjectURL = vi.fn();
+    });
+
+    afterEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it('opens and closes the settings menu', () => {
+        render(
+            <PriorityList 
+                sequence={mockSequence} 
+                progress={{}} 
+                nodeMetadata={{}}
+                job={mockJob}
+                onUpdateSequence={mockOnUpdateSequence}
+                onResetSequence={mockOnResetSequence}
+                isCustom={false}
+            />
+        );
+
+        const settingsButton = screen.getByTitle('Sequence Options');
+        fireEvent.click(settingsButton);
+        expect(screen.getByText('Edit Sequence')).toBeInTheDocument();
+        expect(screen.getByText('Import Sequence')).toBeInTheDocument();
+        expect(screen.getByText('Export Sequence')).toBeInTheDocument();
+
+        // Close
+        fireEvent.click(settingsButton);
+        expect(screen.queryByText('Edit Sequence')).not.toBeInTheDocument();
+    });
+
+    it('triggers edit mode', () => {
+        render(
+            <PriorityList 
+                sequence={mockSequence} 
+                progress={{}} 
+                nodeMetadata={{}}
+                job={mockJob}
+                onUpdateSequence={mockOnUpdateSequence}
+            />
+        );
+
+        const settingsButton = screen.getByTitle('Sequence Options');
+        fireEvent.click(settingsButton);
+        fireEvent.click(screen.getByText('Edit Sequence'));
+
+        // PriorityList internal state handles toggleEdit, checks if "Done" button appears or header changes
+        expect(screen.getByText('Edit Sequence')).toBeInTheDocument(); // Title changes to 'Edit Sequence'
+        expect(screen.queryByTitle('Sequence Options')).not.toBeInTheDocument(); // Settings button hidden in edit mode
+    });
+
+    it('handles export sequence', () => {
+        render(
+            <PriorityList 
+                sequence={mockSequence} 
+                progress={{}} 
+                nodeMetadata={{}}
+                job={mockJob}
+                onUpdateSequence={mockOnUpdateSequence}
+            />
+        );
+        
+        const settingsButton = screen.getByTitle('Sequence Options');
+        fireEvent.click(settingsButton);
+        
+        // Mock anchor click
+        const link = { click: vi.fn(), href: '' };
+        const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(link);
+        const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => {});
+        const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => {});
+
+        fireEvent.click(screen.getByText('Export Sequence'));
+
+        expect(global.URL.createObjectURL).toHaveBeenCalled();
+        expect(link.click).toHaveBeenCalled(); 
+        
+        // Restore mocks strictly within this test to avoid polluting others
+        createElementSpy.mockRestore();
+        appendChildSpy.mockRestore();
+        removeChildSpy.mockRestore();
+    });
+
+    it('handles reset sequence', () => {
+        // Need isCustom=true to show Reset button
+        render(
+            <PriorityList 
+                sequence={mockSequence} 
+                progress={{}} 
+                nodeMetadata={{}}
+                job={mockJob}
+                onUpdateSequence={mockOnUpdateSequence}
+                onResetSequence={mockOnResetSequence}
+                isCustom={true}
+            />
+        );
+
+        const settingsButton = screen.getByTitle('Sequence Options');
+        fireEvent.click(settingsButton);
+        
+        fireEvent.click(screen.getByText('Restore Default'));
+        expect(mockOnResetSequence).toHaveBeenCalled();
+    });
+});
+
