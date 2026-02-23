@@ -91,6 +91,29 @@ function GlobalSettingsMenu({ state, onImport }) {
   );
 }
 
+// Helper to generate URL-safe slugs
+// Format: Job-CharacterName (e.g., #Hero-Mapler)
+const getSlug = (char) => {
+  if (!char) return '';
+  const safeJob = char.job.replace(/\s+/g, '-');
+  const safeName = char.name.replace(/\s+/g, '-');
+  return `${safeJob}-${safeName}`;
+};
+
+// Helper to find ID from slug
+const findIdBySlug = (slug, characters) => {
+  if (!slug) return null;
+
+  const targetSlug = decodeURIComponent(slug).toLowerCase();
+
+  return (
+    Object.values(characters).find((char) => {
+      const charSlug = getSlug(char).toLowerCase();
+      return charSlug === targetSlug;
+    })?.id || null
+  );
+};
+
 function App() {
   const [state, setState] = useState(() => loadState());
   const [showCreator, setShowCreator] = useState(false);
@@ -99,6 +122,73 @@ function App() {
   useEffect(() => {
     saveState(state);
   }, [state]);
+
+  // Sync hash with activeCharacterId
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const foundId = findIdBySlug(hash, state.characters);
+
+      setState((prev) => {
+        if (prev.activeCharacterId !== foundId) {
+          return {
+            ...prev,
+            activeCharacterId: foundId,
+          };
+        }
+        return prev;
+      });
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Sync initial hash on load
+    const initialHash = window.location.hash.replace('#', '');
+    if (initialHash) {
+      handleHashChange();
+      // Validate immediate outcome for initial load:
+      // If the hash didn't resolve to a valid ID, clear it to avoid confusing state
+      const resolvedId = findIdBySlug(initialHash, state.characters);
+      if (!resolvedId) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    } else if (state.activeCharacterId) {
+      // If we have an active ID from state but no hash, set the hash
+      const char = state.characters[state.activeCharacterId];
+      if (char) {
+        window.history.replaceState(null, '', `#${getSlug(char)}`);
+      }
+    }
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [state.characters, state.activeCharacterId]);
+
+  // Cleanup active ID if it no longer exists
+  useEffect(() => {
+    if (state.activeCharacterId && !state.characters[state.activeCharacterId]) {
+      // Character was deleted or invalid state
+      // Clear hash if it matches the (now deleted) character's slug OR id
+      // Since we can't easily regenerate slug for deleted char, we check if current hash resolves to nothing
+      const hash = window.location.hash.replace('#', '');
+      const foundId = findIdBySlug(hash, state.characters);
+
+      if (!foundId && hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+
+      const timer = setTimeout(() => {
+        setState((prev) => ({ ...prev, activeCharacterId: null }));
+      }, 0);
+      return () => clearTimeout(timer);
+    } else if (state.activeCharacterId) {
+      // Ensure URL hash matches current active character (e.g. after rename or load)
+      const char = state.characters[state.activeCharacterId];
+      const correctHash = `#${getSlug(char)}`;
+      if (window.location.hash !== correctHash) {
+        window.history.replaceState(null, '', correctHash);
+      }
+    }
+  }, [state.activeCharacterId, state.characters]);
 
   // -- Handlers --
 
@@ -113,11 +203,15 @@ function App() {
       characterOrder: [...(prev.characterOrder || []), newChar.id],
       activeCharacterId: newChar.id,
     }));
+    window.location.hash = getSlug(newChar);
     setShowCreator(false);
   };
 
   const handleSelectChar = (id) => {
-    setState((prev) => ({ ...prev, activeCharacterId: id }));
+    const char = state.characters[id];
+    if (char) {
+      window.location.hash = getSlug(char);
+    }
   };
 
   const handleDeleteChar = (id) => {
@@ -126,11 +220,17 @@ function App() {
       setState((prev) => {
         const nextChars = { ...prev.characters };
         delete nextChars[id];
+
+        const isActive = prev.activeCharacterId === id;
+        if (isActive) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+
         return {
           ...prev,
           characters: nextChars,
           characterOrder: (prev.characterOrder || []).filter((cid) => cid !== id),
-          activeCharacterId: prev.activeCharacterId === id ? null : prev.activeCharacterId,
+          activeCharacterId: isActive ? null : prev.activeCharacterId,
         };
       });
     }
@@ -235,6 +335,8 @@ function App() {
   };
 
   const handleBack = () => {
+    // Clear the hash cleanly without leaving a trailing '#' in the URL
+    window.history.pushState(null, '', window.location.pathname + window.location.search);
     setState((prev) => ({ ...prev, activeCharacterId: null }));
   };
 
@@ -275,7 +377,6 @@ function App() {
             <button onClick={handleBack} className="btn-secondary">
               ← Back to List
             </button>
-            {/* Remove global settings menu from here */}
           </div>
         </div>
       </header>
