@@ -11,7 +11,7 @@ export const loadState = () => {
 
     if (parsed.version !== CURRENT_VERSION) {
       console.warn('Version mismatch or unknown version, resetting to default safely');
-      // In a real app we might try harder to salvage, 
+      // In a real app we might try harder to salvage,
       // but here we just return empty V2 state to avoid crashes
       return DEFAULT_STATE_V2;
     }

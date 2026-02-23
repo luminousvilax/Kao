@@ -14,17 +14,17 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
     return () => clearTimeout(longPressTimer.current);
   }, []);
 
-  const order = characterOrder?.length > 0 
-    ? characterOrder 
-    : Object.keys(characters);
-  
-  const list = order.map(id => characters[id]).filter(Boolean);
+  const order = characterOrder?.length > 0 ? characterOrder : Object.keys(characters);
+
+  const list = order.map((id) => characters[id]).filter(Boolean);
 
   if (list.length === 0) {
     return (
       <div className="empty-state">
         <p>No characters tracked yet.</p>
-        <button onClick={onAdd} className="btn-primary">Create Your First Character</button>
+        <button onClick={onAdd} className="btn-primary">
+          Create Your First Character
+        </button>
       </div>
     );
   }
@@ -98,11 +98,11 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
           Add New
         </button>
       </header>
-      
+
       <div className="character-cards">
         {list.map((char, index) => (
-          <div 
-            key={char.id} 
+          <div
+            key={char.id}
             className={`char-card ${char.id === activeId ? 'active' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''} ${isReordering ? 'reorder-mode' : ''}`}
             onClick={() => !isReordering && onSelect(char.id)}
             draggable={isReordering}
@@ -122,9 +122,9 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
               <div className="char-edit-form" onClick={(e) => e.stopPropagation()}>
                 <label className="char-edit-field">
                   <span>Name</span>
-                  <input 
-                    type="text" 
-                    value={editForm.name} 
+                  <input
+                    type="text"
+                    value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                     onKeyDown={(e) => e.key === 'Enter' && handleEditSave(e, char.id)}
                     placeholder="Character Name"
@@ -133,9 +133,9 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
                 </label>
                 <label className="char-edit-field">
                   <span>Level</span>
-                  <input 
-                    type="number" 
-                    value={editForm.level} 
+                  <input
+                    type="number"
+                    value={editForm.level}
                     onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
                     onKeyDown={(e) => e.key === 'Enter' && handleEditSave(e, char.id)}
                     placeholder="Level"
@@ -144,8 +144,12 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
                   />
                 </label>
                 <div className="char-edit-actions">
-                  <button className="btn-small btn-primary" onClick={(e) => handleEditSave(e, char.id)}>Save</button>
-                  <button className="btn-small" onClick={handleEditCancel}>Cancel</button>
+                  <button className="btn-small btn-primary" onClick={(e) => handleEditSave(e, char.id)}>
+                    Save
+                  </button>
+                  <button className="btn-small" onClick={handleEditCancel}>
+                    Cancel
+                  </button>
                 </div>
               </div>
             ) : (
@@ -156,15 +160,11 @@ export function CharacterList({ characters, characterOrder, activeId, onSelect, 
                 </div>
                 <div className="char-meta">
                   <span>Lv. {char.level}</span>
-                  <button 
-                    className="btn-edit" 
-                    onClick={(e) => handleEditClick(e, char)}
-                    title="Edit Character"
-                  >
+                  <button className="btn-edit" onClick={(e) => handleEditClick(e, char)} title="Edit Character">
                     <Icons.Edit size={14} />
                   </button>
-                  <button 
-                    className="btn-delete" 
+                  <button
+                    className="btn-delete"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete(char.id);

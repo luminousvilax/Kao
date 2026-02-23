@@ -1,4 +1,3 @@
-
 import { describe, it, expect } from 'vitest';
 import { JOB_SEQUENCES } from '../data/sequences';
 import { NODE_IDS } from '../data/constants';
@@ -25,10 +24,9 @@ const MAX_LEVELS = {
 const WIP_JOBS = [];
 
 describe('Job Sequence Validation', () => {
-  
-  Object.keys(JOB_SEQUENCES).forEach(jobName => {
+  Object.keys(JOB_SEQUENCES).forEach((jobName) => {
     // Skip known WIP jobs unless specifically targeted via -t flag?
-    // Vitest doesn't easily expose filter args here. 
+    // Vitest doesn't easily expose filter args here.
     // We'll define the test but mark as .skip if it's WIP.
     const runTest = WIP_JOBS.includes(jobName) ? describe.skip : describe;
 
@@ -46,7 +44,7 @@ describe('Job Sequence Validation', () => {
       it('should reach max level for all required nodes', () => {
         const finalLevels = {};
 
-        sequence.forEach(step => {
+        sequence.forEach((step) => {
           finalLevels[step.nodeId] = step.targetLevel;
         });
 
@@ -54,7 +52,9 @@ describe('Job Sequence Validation', () => {
           // Check if node exists in final levels
           expect(finalLevels[nodeId], `Node ${nodeId} missing from sequence`).toBeDefined();
           // Check if max level is reached
-          expect(finalLevels[nodeId], `Node ${nodeId} final level ${finalLevels[nodeId]} != ${maxLevel}`).toBe(maxLevel);
+          expect(finalLevels[nodeId], `Node ${nodeId} final level ${finalLevels[nodeId]} != ${maxLevel}`).toBe(
+            maxLevel
+          );
         });
       });
 
@@ -66,14 +66,11 @@ describe('Job Sequence Validation', () => {
           const previousLevel = currentLevels[nodeId] || 0;
 
           if (targetLevel <= previousLevel) {
-            throw new Error(
-              `Step ${index} (${nodeId}): targetLevel ${targetLevel} <= previous ${previousLevel}`
-            );
+            throw new Error(`Step ${index} (${nodeId}): targetLevel ${targetLevel} <= previous ${previousLevel}`);
           }
           currentLevels[nodeId] = targetLevel;
         });
       });
-
     });
   });
 });

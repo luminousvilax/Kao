@@ -31,13 +31,13 @@ export function CharacterCreator({ onCreate, onCancel }) {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Character Name</label>
-            <input 
+            <input
               autoFocus
-              type="text" 
-              value={name} 
-              onChange={e => setName(e.target.value)} 
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Mapler"
-              required 
+              required
             />
           </div>
 
@@ -45,45 +45,47 @@ export function CharacterCreator({ onCreate, onCancel }) {
             <label>Job Group</label>
             <select value={jobGroup} onChange={handleGroupChange}>
               <option value="All">All Groups</option>
-              {Object.keys(JOB_GROUPS).map(group => (
-                <option key={group} value={group}>{group}</option>
+              {Object.keys(JOB_GROUPS).map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
             <label>Job / Class</label>
-            <select value={job} onChange={e => setJob(e.target.value)}>
-              {jobGroup === 'All' ? (
-                Object.entries(JOB_GROUPS).map(([groupName, jobs]) => (
-                  <optgroup key={groupName} label={groupName}>
-                    {jobs.map(j => (
-                      <option key={j} value={j}>{j}</option>
-                    ))}
-                  </optgroup>
-                ))
-              ) : (
-                JOB_GROUPS[jobGroup].map(j => (
-                  <option key={j} value={j}>{j}</option>
-                ))
-              )}
+            <select value={job} onChange={(e) => setJob(e.target.value)}>
+              {jobGroup === 'All'
+                ? Object.entries(JOB_GROUPS).map(([groupName, jobs]) => (
+                    <optgroup key={groupName} label={groupName}>
+                      {jobs.map((j) => (
+                        <option key={j} value={j}>
+                          {j}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))
+                : JOB_GROUPS[jobGroup].map((j) => (
+                    <option key={j} value={j}>
+                      {j}
+                    </option>
+                  ))}
             </select>
           </div>
 
           <div className="form-group">
             <label>Current Level</label>
-            <input 
-              type="number" 
-              min={260} 
-              max={300} 
-              value={level} 
-              onChange={e => setLevel(e.target.value)} 
-            />
+            <input type="number" min={260} max={300} value={level} onChange={(e) => setLevel(e.target.value)} />
           </div>
 
           <div className="actions">
-            <button type="button" onClick={onCancel} className="btn-secondary">Cancel</button>
-            <button type="submit" className="btn-primary">Create Character</button>
+            <button type="button" onClick={onCancel} className="btn-secondary">
+              Cancel
+            </button>
+            <button type="submit" className="btn-primary">
+              Create Character
+            </button>
           </div>
         </form>
       </div>

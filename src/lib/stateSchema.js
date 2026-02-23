@@ -4,7 +4,7 @@ export const DEFAULT_STATE_V2 = {
   version: CURRENT_VERSION,
   characters: {},
   activeCharacterId: null,
-  characterOrder: [] // IDs in sorted order
+  characterOrder: [], // IDs in sorted order
 };
 
 export const createCharacter = (name, job, level) => {
@@ -24,8 +24,8 @@ export const createCharacter = (name, job, level) => {
       b2: 0,
       b3: 0,
       b4: 0,
-      common_1: 0
-    }
+      common_1: 0,
+    },
     // prioritySequence removed to use global defaults unless customized
   };
 };

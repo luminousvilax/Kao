@@ -60,7 +60,7 @@ describe('CharacterList', () => {
     fireEvent.click(deleteButtons[0]);
     expect(defaultProps.onDelete).toHaveBeenCalledWith('char-1');
     // Ensure onSelect was not called due to propagation
-    expect(defaultProps.onSelect).not.toHaveBeenCalled(); 
+    expect(defaultProps.onSelect).not.toHaveBeenCalled();
   });
 
   it('highlights the active character', () => {
@@ -73,7 +73,7 @@ describe('CharacterList', () => {
     render(<CharacterList {...defaultProps} />);
     const editButtons = screen.getAllByTitle('Edit Character');
     fireEvent.click(editButtons[0]);
-    
+
     expect(screen.getByPlaceholderText('Character Name')).toHaveValue('MyHero');
     expect(screen.getByPlaceholderText('Level')).toHaveValue(260);
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
@@ -83,31 +83,31 @@ describe('CharacterList', () => {
   it('calls onUpdate with new values when save is clicked', () => {
     const onUpdateMock = vi.fn();
     render(<CharacterList {...defaultProps} onUpdate={onUpdateMock} />);
-    
+
     const editButtons = screen.getAllByTitle('Edit Character');
     fireEvent.click(editButtons[0]);
-    
+
     const nameInput = screen.getByPlaceholderText('Character Name');
     const levelInput = screen.getByPlaceholderText('Level');
-    
+
     fireEvent.change(nameInput, { target: { value: 'NewHeroName' } });
     fireEvent.change(levelInput, { target: { value: '265' } });
-    
+
     const saveButton = screen.getByRole('button', { name: 'Save' });
     fireEvent.click(saveButton);
-    
+
     expect(onUpdateMock).toHaveBeenCalledWith('char-1', { name: 'NewHeroName', level: 265 });
   });
 
   it('cancels edit mode when cancel is clicked', () => {
     render(<CharacterList {...defaultProps} />);
-    
+
     const editButtons = screen.getAllByTitle('Edit Character');
     fireEvent.click(editButtons[0]);
-    
+
     const cancelButton = screen.getByRole('button', { name: 'Cancel' });
     fireEvent.click(cancelButton);
-    
+
     expect(screen.queryByPlaceholderText('Character Name')).not.toBeInTheDocument();
     expect(screen.getByText('MyHero')).toBeInTheDocument();
   });

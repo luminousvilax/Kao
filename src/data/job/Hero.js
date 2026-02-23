@@ -13,16 +13,16 @@ import m4Icon from '../../assets/skills/hero/m4_Cry_Valhalla.png';
 
 // Specific skill names/icons for Hero
 export const DATA = {
-  [NODE_IDS.ORIGIN]: { name: "Spirit Calibur", icon: h1Icon },
-  [NODE_IDS.ASCENT]: { name: "Ultrasonic Slash", icon: h2Icon },
-  [NODE_IDS.MASTERY_1]: { name: "Raging Blow VI", icon: m1Icon },
-  [NODE_IDS.MASTERY_2]: { name: "Rising Rage VI", icon: m2Icon },
-  [NODE_IDS.MASTERY_3]: { name: "Beam Blade VI\nRending Edge", icon: m3Icon },
-  [NODE_IDS.MASTERY_4]: { name: "Cry Valhalla VI\nPuncture VI\nFinal Attack VI", icon: m4Icon },
-  [NODE_IDS.BOOST_1]: { name: "Burning Soul Blade", icon: b1Icon },
-  [NODE_IDS.BOOST_2]: { name: "Instinctual Combo", icon: b2Icon },
-  [NODE_IDS.BOOST_3]: { name: "Worldreaver", icon: b3Icon },
-  [NODE_IDS.BOOST_4]: { name: "Sword Illusion", icon: b4Icon },
+  [NODE_IDS.ORIGIN]: { name: 'Spirit Calibur', icon: h1Icon },
+  [NODE_IDS.ASCENT]: { name: 'Ultrasonic Slash', icon: h2Icon },
+  [NODE_IDS.MASTERY_1]: { name: 'Raging Blow VI', icon: m1Icon },
+  [NODE_IDS.MASTERY_2]: { name: 'Rising Rage VI', icon: m2Icon },
+  [NODE_IDS.MASTERY_3]: { name: 'Beam Blade VI\nRending Edge', icon: m3Icon },
+  [NODE_IDS.MASTERY_4]: { name: 'Cry Valhalla VI\nPuncture VI\nFinal Attack VI', icon: m4Icon },
+  [NODE_IDS.BOOST_1]: { name: 'Burning Soul Blade', icon: b1Icon },
+  [NODE_IDS.BOOST_2]: { name: 'Instinctual Combo', icon: b2Icon },
+  [NODE_IDS.BOOST_3]: { name: 'Worldreaver', icon: b3Icon },
+  [NODE_IDS.BOOST_4]: { name: 'Sword Illusion', icon: b4Icon },
 };
 
 // Hero-specific enhancement sequence
@@ -110,5 +110,5 @@ export const SEQUENCE = [
   { nodeId: NODE_IDS.BOOST_4, targetLevel: 12 },
   { nodeId: NODE_IDS.ASCENT, targetLevel: 30 },
   { nodeId: NODE_IDS.BOOST_4, targetLevel: 30 },
-  { nodeId: NODE_IDS.BOOST_3, targetLevel: 30 }
+  { nodeId: NODE_IDS.BOOST_3, targetLevel: 30 },
 ];

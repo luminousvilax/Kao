@@ -28,7 +28,7 @@ const HexaInput = ({ value, onChange, min, max }) => {
   const handleBlur = () => {
     let numVal = parseInt(localValue, 10);
     if (isNaN(numVal)) numVal = 0;
-    
+
     // Clamp
     if (numVal < min) numVal = min;
     if (numVal > max) numVal = max;
@@ -38,21 +38,13 @@ const HexaInput = ({ value, onChange, min, max }) => {
     setLocalValue(numVal.toString());
   };
 
-  return (
-    <input
-      type="number"
-      min={min}
-      max={max}
-      value={localValue}
-      onChange={handleChange}
-      onBlur={handleBlur}
-    />
-  );
+  return <input type="number" min={min} max={max} value={localValue} onChange={handleChange} onBlur={handleBlur} />;
 };
 
 export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
-  const nodes = (nodeMetadata ? Object.values(nodeMetadata) : Object.values(SKILL_NODES))
-    .filter((n) => n.type !== 'stat');
+  const nodes = (nodeMetadata ? Object.values(nodeMetadata) : Object.values(SKILL_NODES)).filter(
+    (n) => n.type !== 'stat'
+  );
 
   const groupedByType = nodes.reduce((acc, n) => {
     if (!acc[n.type]) acc[n.type] = [];
@@ -73,18 +65,22 @@ export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
 
             return (
               <div key={node.id} className={`hexa-node-card type-${node.type}`}>
-                <span className={`node-label ${node.icon && node.icon.length > 4 ? 'has-image-only' : ''}`} title={node.displayName || node.label}>
+                <span
+                  className={`node-label ${node.icon && node.icon.length > 4 ? 'has-image-only' : ''}`}
+                  title={node.displayName || node.label}
+                >
                   {node.icon && node.icon.length > 4 ? (
                     <span className="node-icon-container image-only">
-                      <img src={node.icon} alt={node.displayName || node.label} className="node-icon-img" decoding="async" />
+                      <img
+                        src={node.icon}
+                        alt={node.displayName || node.label}
+                        className="node-icon-img"
+                        decoding="async"
+                      />
                     </span>
                   ) : (
                     <>
-                      {node.icon && (
-                        <span className="node-icon-container">
-                          {node.icon}
-                        </span>
-                      )}
+                      {node.icon && <span className="node-icon-container">{node.icon}</span>}
                       {node.displayName || node.label}
                     </>
                   )}
@@ -98,10 +94,7 @@ export function HexaGrid({ progress, onUpdate, nodeMetadata }) {
                   />
                 </div>
                 <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${(currentLevel / 30) * 100}%` }}
-                  ></div>
+                  <div className="progress-fill" style={{ width: `${(currentLevel / 30) * 100}%` }}></div>
                 </div>
               </div>
             );

@@ -9,16 +9,16 @@ vi.mock('../components/CharacterList', () => ({
     <div data-testid="character-list">
       <button onClick={() => onSelectCharacter('char1')}>Select Char 1</button>
     </div>
-  )
+  ),
 }));
 vi.mock('../components/CharacterCreator', () => ({
-  CharacterCreator: () => <div data-testid="character-creator">Character Creator</div>
+  CharacterCreator: () => <div data-testid="character-creator">Character Creator</div>,
 }));
 vi.mock('../components/HexaGrid', () => ({
-  HexaGrid: () => <div data-testid="hexa-grid">Hexa Grid</div>
+  HexaGrid: () => <div data-testid="hexa-grid">Hexa Grid</div>,
 }));
 vi.mock('../components/PriorityList', () => ({
-  PriorityList: () => <div data-testid="priority-list">Priority List</div>
+  PriorityList: () => <div data-testid="priority-list">Priority List</div>,
 }));
 
 // Mock URL.createObjectURL and URL.revokeObjectURL
@@ -46,7 +46,7 @@ describe('App Global Settings', () => {
   it('opens and closes the settings menu', () => {
     render(<App />);
     const settingsButton = screen.getByTitle('Settings');
-    
+
     // Open
     fireEvent.click(settingsButton);
     expect(screen.getByText('Import Data')).toBeInTheDocument();
@@ -63,7 +63,7 @@ describe('App Global Settings', () => {
     fireEvent.click(settingsButton);
 
     const exportButton = screen.getByText('Export Data');
-    
+
     // Mock anchor click
     const link = { click: vi.fn(), href: '' };
     const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(link);
@@ -101,16 +101,16 @@ describe('App Global Settings', () => {
     // Upload file
     fireEvent.change(fileInput, { target: { files: [file] } });
 
-    // Since FileReader is async, we might need to wait for state update. 
+    // Since FileReader is async, we might need to wait for state update.
     // However, App internal state update might not be easily observable without looking at effects.
     // We can verify if localStorage.setItem was called with imported data.
-    
+
     await waitFor(() => {
-        // App saves to localStorage on change. 
-        // If import succeeds, it should update state and trigger save.
-        // But App.jsx logic for loadState/saveState needs to be considered.
-        // If `onImport` updates state, `useEffect` monitoring `state` calls `saveState`.
-        expect(localStorage.setItem).toHaveBeenCalled();
+      // App saves to localStorage on change.
+      // If import succeeds, it should update state and trigger save.
+      // But App.jsx logic for loadState/saveState needs to be considered.
+      // If `onImport` updates state, `useEffect` monitoring `state` calls `saveState`.
+      expect(localStorage.setItem).toHaveBeenCalled();
     });
   });
 });

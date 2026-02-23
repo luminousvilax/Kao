@@ -8,6 +8,7 @@ A browser-based tracker for MapleStory's 6th Job (Hexa) progression. This tool h
 - **Multiple Characters**: Create and manage progression for multiple characters.
 - **Custom Upgrade Plans**: Use the drag-and-drop edit mode to define and prioritize your own skill upgrade sequences.
 - **Skill Progression**: Track levels for Origin, Mastery, Boost, and Common nodes.
+- **Import/Export**: Easily sync your data between devices, or share custom sequence with friends.
 
 ## Development Status
 

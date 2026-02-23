@@ -5,21 +5,22 @@ This is a React + Vite single-page application for tracking MapleStory 6th Job (
 ## Core Architecture
 
 - **State Management**:
-  - The entire app state is a single JSON object managed in `src/App.jsx` and persisted to `localStorage` via `src/lib/storage.js`.
-  - State follows a strict schema defined in `src/lib/stateSchema.js`. Current version is **V2**.
-  - **Pattern**: Updates typically flow up to `App.jsx` handlers (`handleCreateChar`, `handleHexaUpdate`) which then sync to `localStorage` using functional updates for immutability.
+  - Global state is a single JSON object managed in `src/App.jsx` and persisted to `localStorage` via `src/lib/storage.js`.
+  - State schema is defined in `src/lib/stateSchema.js` (Current: **V2**).
+  - Updates must use functional state setters (`setData(prev => ({...}))`) to ensure reliability.
+- **Data Persistence**: 
+  - **Auto-save**: Syncs to `localStorage` on change.
+  - **Import/Export**: Users can backup/restore full app state (JSON) via `GlobalSettingsMenu` component.
 - **Data Model**:
-  - **Characters**: Normalized in a `characters` map (ID -> Object) with a separate `characterOrder` array (for sorting).
-  - **Skill Nodes**: Uses standardized constants from `src/data/constants.js` (e.g., `NODE_IDS.ORIGIN`, `NODE_IDS.MASTERY_1`). STRICTLY use these constants, never raw strings.
-  - **Jobs**: Static configuration in `src/data/jobs.js`. Job-specific data (skills, icons, optimization sequences) is modularized in `src/data/job/*.js`. Do not fetch external job data.
-- **Routing**: Virtual routing controlled by `activeCharacterId` in the global state.
-  - `null`: Character List view.
-  - `UUID`: Dashboard/Tracker view.
+  - **Skill Nodes**: STRICTLY use constants from `src/data/constants.js` (e.g., `NODE_IDS.ORIGIN`, `NODE_IDS.MASTERY_1`).
+  - **Jobs**: Static configuration in `src/data/jobs.js`. Modular data lives in `src/data/job/*.js`.
+- **Routing**: Virtual routing via `activeCharacterId` state (Dashboard vs List view).
 
 ## Tech Stack & Libraries
 
 - **Framework**: React + Vite.
-- **Drag & Drop**: `@dnd-kit/*` for reordering lists (e.g., priority sequences).
+- **Drag & Drop**: `@dnd-kit/*` for reordering lists (Priority Sequences).
+- **Icons**: `src/components/Icons.jsx` (Lucide-based SVGs). Use `<Icons.Name />` instead of emojis for UI.
 - **Styling**: Plain CSS with BEM naming conventions. No Tailwind/CSS-in-JS.
 - **Testing**: `vitest` + `react-testing-library`.
 
@@ -27,33 +28,27 @@ This is a React + Vite single-page application for tracking MapleStory 6th Job (
 
 - **Start Dev Server**: `npm run dev`
 - **Lint & Format**: 
-  - `npm run lint` (ESLint 9 + React Plugins). **Strict**: Zero warnings allowed.
+  - `npm run lint` (ESLint 9). **Strict**: Zero warnings allowed.
   - `npm run format` (Prettier).
-  - **Rule**: Always run lint/format before committing. ESLint is configured to be strict about React Hooks dependencies.
-- **Testing**: `npm test` (Vitest). Create tests in `src/tests/` mirroring component structure.
-- **Build**: `npm run build` (outputs to `dist/`, used by GitHub Actions).
+  - **Rule**: Run before committing.
+- **Testing**: 
+  - `npm test` (matches `src/tests/*.test.jsx`).
+  - **Mocking**: For file operations (`FileReader`, `URL.createObjectURL`), use the class-based mock pattern seen in `src/tests/App.ImportExport.test.jsx`.
 
 ## Project Conventions
 
-1.  **Immutability**: Logic in `App.jsx` handlers must use functional state updates (`setData(prev => ({...}))`) to ensure reliability.
-2.  **Job Data Isolation**: 
-    - **Do**: Add new jobs by creating `src/data/job/{JobName}.js` and importing it in `src/data/jobs.js`.
-    - **Do not** hardcode job data in components. kept strictly in data files.
-3.  **Skill IDs**: Use the standardized keys from `src/data/constants.js` (`origin`, `b1`, `m1`, etc.) everywhere. Never use display labels ("Origin Skill") as data keys.
-4.  **Asset Management**:
-    - Skill icons live in `src/assets/skills/{jobName}/`.
-    - Reference them in job data files; components should receive resolved paths or emojis.
+1.  **Job Data Isolation**: 
+    - Create `src/data/job/{JobName}.js`, import in `src/data/jobs.js`.
+    - NEVER hardcode job data in components.
+2.  **Asset Management**:
+    - **Skill Icons**: `src/assets/skills/{jobName}/`. Reference in job data files.
+    - **UI Icons**: Use `src/components/Icons.jsx`.
+3.  **Skill IDs**: Use `NODE_IDS` keys (`origin`, `b1`, etc.) everywhere. Never use display labels as keys.
 
 ## Key Components
 
-- **HexaGrid (`src/components/HexaGrid.jsx`)**:  
-  - The core input matrix. Handles 0-30 clamping for all node types.
-- **PriorityList (`src/components/PriorityList.jsx`)**:
-  - Displays the "Next Upgrades" checklist. Derived from `prioritySequence` vs current `skillProgress`.
-- **CharacterList (`src/components/CharacterList.jsx`)**:
-  - Manages the list of characters and selection/deletion.
-
-## deployment
-
-- **GitHub Pages**: Deploys via `.github/workflows/deploy.yml` on push to `main`.
-- **Base Path**: `vite.config.js` is set to relative base (`./`) to support generic Pages hosting.
+- **HexaGrid (`src/components/HexaGrid.jsx`)**: Core input matrix. Handles 0-30 node clamping.
+- **PriorityList (`src/components/PriorityList.jsx`)**: 
+  - Manages "Next Upgrades" checklist.
+  - Includes `SequenceSettingsMenu` for importing/exporting job-specific sequences.
+- **Icons (`src/components/Icons.jsx`)**: Central registry for SVG UI icons (Settings, Edit, Download, etc).

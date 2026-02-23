@@ -33,9 +33,9 @@ export default tseslint.config(
       'react/prop-types': 'off',
     },
     settings: {
-      react: { version: '18.2' }, 
+      react: { version: '18.2' },
     },
   },
   // proper prettier config at the end to override other styling rules
-  prettier,
+  prettier
 );

@@ -25,9 +25,9 @@ import { SEQUENCE as RenSequence } from './job/Ren';
 import { SEQUENCE as HayatoSequence } from './job/Hayato';
 
 export const JOB_SEQUENCES = {
-  'Hero': HeroSequence,
-  'Ren': RenSequence,
-  'Hayato': HayatoSequence,
+  Hero: HeroSequence,
+  Ren: RenSequence,
+  Hayato: HayatoSequence,
 };
 
 export const getSequence = (job) => {

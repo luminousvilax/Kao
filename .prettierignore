@@ -1,0 +1,11 @@
+# Directories
+build
+dist
+docs
+node_modules
+
+# Files
+*.html
+*.json
+*.md
+*.txt

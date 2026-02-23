@@ -12,16 +12,22 @@ import b3Icon from '../../assets/skills/ren/b3_Final_Plum_Blossom_Sword_Dancing_
 import b4Icon from '../../assets/skills/ren/b4_Final_Imugi_Spirit_Sword_Blade_of_the_Unbound_Heart.png';
 
 export const DATA = {
-  [NODE_IDS.ORIGIN]: { name: "Rising Azure Dragon: Divided Heavens", icon: h1Icon },
-  [NODE_IDS.ASCENT]: { name: "Rising Azure Dragon: Heartbound Verse", icon: h2Icon },
-  [NODE_IDS.MASTERY_1]: { name: "Plum Blossom Sword: Storm VI", icon: m1Icon },
+  [NODE_IDS.ORIGIN]: { name: 'Rising Azure Dragon: Divided Heavens', icon: h1Icon },
+  [NODE_IDS.ASCENT]: { name: 'Rising Azure Dragon: Heartbound Verse', icon: h2Icon },
+  [NODE_IDS.MASTERY_1]: { name: 'Plum Blossom Sword: Storm VI', icon: m1Icon },
   [NODE_IDS.MASTERY_2]: { name: "Imugi Spirit Sword: Spirit Strike VI\nSerpent's Fang VI", icon: m2Icon },
-  [NODE_IDS.MASTERY_3]: { name: "Wish Unending\nFinal Imugi Spirit Sword: Burrowing Earth VI\nRavenous Spirit VI\nYears Uncounted VI", icon: m3Icon },
-  [NODE_IDS.MASTERY_4]: { name: "Second Plum Blossom Sword: Raining Blossoms VI\nRiotous Heart VI\nHearts United VI", icon: m4Icon },
-  [NODE_IDS.BOOST_1]: { name: "Final Plum Blossom Sword: Thousand Blossom Flurry", icon: b1Icon },
-  [NODE_IDS.BOOST_2]: { name: "Soul Immeasurable", icon: b2Icon },
-  [NODE_IDS.BOOST_3]: { name: "Final Plum Blossom Sword: Dancing Annihilation", icon: b3Icon },
-  [NODE_IDS.BOOST_4]: { name: "Final Imugi Spirit Sword: Blade of the Unbound Heart", icon: b4Icon },
+  [NODE_IDS.MASTERY_3]: {
+    name: 'Wish Unending\nFinal Imugi Spirit Sword: Burrowing Earth VI\nRavenous Spirit VI\nYears Uncounted VI',
+    icon: m3Icon,
+  },
+  [NODE_IDS.MASTERY_4]: {
+    name: 'Second Plum Blossom Sword: Raining Blossoms VI\nRiotous Heart VI\nHearts United VI',
+    icon: m4Icon,
+  },
+  [NODE_IDS.BOOST_1]: { name: 'Final Plum Blossom Sword: Thousand Blossom Flurry', icon: b1Icon },
+  [NODE_IDS.BOOST_2]: { name: 'Soul Immeasurable', icon: b2Icon },
+  [NODE_IDS.BOOST_3]: { name: 'Final Plum Blossom Sword: Dancing Annihilation', icon: b3Icon },
+  [NODE_IDS.BOOST_4]: { name: 'Final Imugi Spirit Sword: Blade of the Unbound Heart', icon: b4Icon },
 };
 
 export const SEQUENCE = [
@@ -80,7 +86,7 @@ export const SEQUENCE = [
   { nodeId: NODE_IDS.MASTERY_3, targetLevel: 29 },
   { nodeId: NODE_IDS.MASTERY_2, targetLevel: 29 },
   { nodeId: NODE_IDS.BOOST_1, targetLevel: 10 },
-  
+
   { nodeId: NODE_IDS.BOOST_2, targetLevel: 10 },
   { nodeId: NODE_IDS.ASCENT, targetLevel: 7 },
   { nodeId: NODE_IDS.MASTERY_4, targetLevel: 26 },
@@ -108,7 +114,7 @@ export const SEQUENCE = [
   { nodeId: NODE_IDS.BOOST_4, targetLevel: 30 },
   { nodeId: NODE_IDS.ASCENT, targetLevel: 14 },
   { nodeId: NODE_IDS.BOOST_1, targetLevel: 20 },
-  
+
   { nodeId: NODE_IDS.BOOST_2, targetLevel: 20 },
   { nodeId: NODE_IDS.ORIGIN, targetLevel: 30 },
   { nodeId: NODE_IDS.ASCENT, targetLevel: 17 },
@@ -120,5 +126,5 @@ export const SEQUENCE = [
   { nodeId: NODE_IDS.BOOST_3, targetLevel: 20 },
   { nodeId: NODE_IDS.ASCENT, targetLevel: 21 },
   { nodeId: NODE_IDS.BOOST_3, targetLevel: 30 },
-  { nodeId: NODE_IDS.ASCENT, targetLevel: 30 }
+  { nodeId: NODE_IDS.ASCENT, targetLevel: 30 },
 ];

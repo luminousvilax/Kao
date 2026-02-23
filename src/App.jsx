@@ -71,11 +71,7 @@ function GlobalSettingsMenu({ state, onImport }) {
 
   return (
     <div className="settings-menu-container" ref={menuRef}>
-      <button 
-        className="settings-btn" 
-        onClick={() => setIsOpen(!isOpen)}
-        title="Settings"
-      >
+      <button className="settings-btn" onClick={() => setIsOpen(!isOpen)} title="Settings">
         <Icons.Settings />
       </button>
       {isOpen && (
@@ -90,13 +86,7 @@ function GlobalSettingsMenu({ state, onImport }) {
           </button>
         </div>
       )}
-      <input
-        type="file"
-        accept=".json"
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
+      <input type="file" accept=".json" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
     </div>
   );
 }
@@ -114,44 +104,42 @@ function App() {
 
   const handleCreateChar = ({ name, job, level }) => {
     const newChar = createCharacter(name, job, level);
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       characters: {
         ...prev.characters,
-        [newChar.id]: newChar
+        [newChar.id]: newChar,
       },
       characterOrder: [...(prev.characterOrder || []), newChar.id],
-      activeCharacterId: newChar.id
+      activeCharacterId: newChar.id,
     }));
     setShowCreator(false);
   };
 
   const handleSelectChar = (id) => {
-    setState(prev => ({ ...prev, activeCharacterId: id }));
+    setState((prev) => ({ ...prev, activeCharacterId: id }));
   };
 
   const handleDeleteChar = (id) => {
     const charName = state.characters[id]?.name;
     if (window.confirm(`Are you sure you want to delete ${charName}?\nAll progress will be lost.`)) {
-      setState(prev => {
+      setState((prev) => {
         const nextChars = { ...prev.characters };
         delete nextChars[id];
         return {
           ...prev,
           characters: nextChars,
-          characterOrder: (prev.characterOrder || []).filter(cid => cid !== id),
-          activeCharacterId: prev.activeCharacterId === id ? null : prev.activeCharacterId
+          characterOrder: (prev.characterOrder || []).filter((cid) => cid !== id),
+          activeCharacterId: prev.activeCharacterId === id ? null : prev.activeCharacterId,
         };
       });
     }
   };
 
   const handleSwapChars = (fromIndex, toIndex) => {
-    setState(prev => {
-      const order = prev.characterOrder?.length 
-        ? [...prev.characterOrder] 
-        : Object.keys(prev.characters);
-      
+    setState((prev) => {
+      const order = prev.characterOrder?.length ? [...prev.characterOrder] : Object.keys(prev.characters);
+
       const newOrder = [...order];
       const [moved] = newOrder.splice(fromIndex, 1);
       newOrder.splice(toIndex, 0, moved);
@@ -160,35 +148,37 @@ function App() {
   };
 
   const handleUpdateChar = (id, updates) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       characters: {
         ...prev.characters,
         [id]: {
           ...prev.characters[id],
-          ...updates
-        }
-      }
+          ...updates,
+        },
+      },
     }));
   };
 
   const activeChar = state.activeCharacterId ? state.characters[state.activeCharacterId] : null;
 
   // Derive job-specific data
-  const nodeMetadata = activeChar ? Object.keys(SKILL_NODES).reduce((acc, key) => {
-    const node = SKILL_NODES[key];
-    acc[node.id] = getJobNodeData(activeChar.job, node.id);
-    return acc;
-  }, {}) : {};
+  const nodeMetadata = activeChar
+    ? Object.keys(SKILL_NODES).reduce((acc, key) => {
+        const node = SKILL_NODES[key];
+        acc[node.id] = getJobNodeData(activeChar.job, node.id);
+        return acc;
+      }, {})
+    : {};
 
-  const activeSequence = activeChar ? (activeChar.prioritySequence || getSequence(activeChar.job)) : [];
+  const activeSequence = activeChar ? activeChar.prioritySequence || getSequence(activeChar.job) : [];
   const isCustomSequence = activeChar && !!activeChar.prioritySequence;
 
   const handleHexaUpdate = (nodeId, level) => {
     if (!activeChar) return;
     const safeLevel = Math.max(0, Math.min(30, Number(level) || 0));
 
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       characters: {
         ...prev.characters,
@@ -196,40 +186,40 @@ function App() {
           ...activeChar,
           skillProgress: {
             ...activeChar.skillProgress,
-            [nodeId]: safeLevel
-          }
-        }
-      }
+            [nodeId]: safeLevel,
+          },
+        },
+      },
     }));
   };
 
   const handleSequenceUpdate = (newSequence) => {
     if (!activeChar) return;
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       characters: {
         ...prev.characters,
         [activeChar.id]: {
           ...activeChar,
-          prioritySequence: newSequence
-        }
-      }
+          prioritySequence: newSequence,
+        },
+      },
     }));
   };
 
   const handleResetSequence = () => {
     if (!activeChar) return;
     // Remove the custom sequence so it falls back to default
-    setState(prev => {
+    setState((prev) => {
       const nextChar = { ...activeChar };
       delete nextChar.prioritySequence;
-        
+
       return {
         ...prev,
         characters: {
           ...prev.characters,
-          [activeChar.id]: nextChar
-        }
+          [activeChar.id]: nextChar,
+        },
       };
     });
   };
@@ -241,18 +231,13 @@ function App() {
   };
 
   const handleBack = () => {
-    setState(prev => ({ ...prev, activeCharacterId: null }));
+    setState((prev) => ({ ...prev, activeCharacterId: null }));
   };
 
   // -- Render --
 
   if (showCreator) {
-    return (
-      <CharacterCreator 
-        onCancel={() => setShowCreator(false)} 
-        onCreate={handleCreateChar} 
-      />
-    );
+    return <CharacterCreator onCancel={() => setShowCreator(false)} onCreate={handleCreateChar} />;
   }
 
   // If we have characters but no active one selected, show list
@@ -267,7 +252,7 @@ function App() {
           </div>
         </header>
         <main>
-          <CharacterList 
+          <CharacterList
             characters={state.characters}
             characterOrder={state.characterOrder}
             activeId={state.activeCharacterId}
@@ -288,7 +273,9 @@ function App() {
         <div className="header-content">
           <h1>MapleStory Hexa Tracker</h1>
           <div className="header-actions-right">
-            <button onClick={handleBack} className="btn-secondary">← Back to List</button>
+            <button onClick={handleBack} className="btn-secondary">
+              ← Back to List
+            </button>
             {/* Remove global settings menu from here */}
           </div>
         </div>
@@ -296,24 +283,22 @@ function App() {
 
       <main>
         <div className="dashboard-header">
-          <h2>{activeChar.name} <span className="job-tag">({activeChar.job})</span></h2>
+          <h2>
+            {activeChar.name} <span className="job-tag">({activeChar.job})</span>
+          </h2>
         </div>
-        
+
         <section className="tracker-card">
           <h3>Hexa Matrix Progress</h3>
           <p className="hint">Enter your current level (0-30) for each node.</p>
-          <HexaGrid 
-            progress={activeChar.skillProgress} 
-            onUpdate={handleHexaUpdate} 
-            nodeMetadata={nodeMetadata}
-          />
+          <HexaGrid progress={activeChar.skillProgress} onUpdate={handleHexaUpdate} nodeMetadata={nodeMetadata} />
         </section>
 
         <section className="tracker-card">
-          <PriorityList 
-            sequence={activeSequence} 
+          <PriorityList
+            sequence={activeSequence}
             progress={activeChar.skillProgress}
-            onCompleteStep={handleHexaUpdate} 
+            onCompleteStep={handleHexaUpdate}
             nodeMetadata={nodeMetadata}
             isCustom={isCustomSequence}
             onUpdateSequence={handleSequenceUpdate}

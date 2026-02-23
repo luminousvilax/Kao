@@ -5,15 +5,15 @@ export function PriorityItem({ step, node, isDone, onComplete, onRemove, onEdit,
   if (!node) return null;
 
   return (
-    <div 
+    <div
       className={`sequence-item ${isDone ? 'done' : 'pending'}`}
-      {...attributes} 
+      {...attributes}
       {...listeners}
       style={{
         ...style,
         cursor: listeners ? 'grab' : 'default',
         touchAction: listeners ? 'none' : 'auto',
-        position: 'relative' // For absolute positioning if needed
+        position: 'relative', // For absolute positioning if needed
       }}
     >
       <div className="step-info">
@@ -35,7 +35,7 @@ export function PriorityItem({ step, node, isDone, onComplete, onRemove, onEdit,
 
       <div className="step-actions">
         {onComplete && (
-          <button 
+          <button
             className={`check-btn ${isDone ? 'checked' : ''}`}
             onClick={(e) => {
               e.stopPropagation(); // Prevent drag start if clicking button
@@ -49,7 +49,7 @@ export function PriorityItem({ step, node, isDone, onComplete, onRemove, onEdit,
         )}
 
         {onEdit && (
-          <button 
+          <button
             className="edit-step-btn"
             onClick={(e) => {
               e.stopPropagation();
@@ -63,7 +63,7 @@ export function PriorityItem({ step, node, isDone, onComplete, onRemove, onEdit,
         )}
 
         {onRemove && (
-          <button 
+          <button
             className="delete-btn"
             onClick={(e) => {
               e.stopPropagation();
