@@ -20,3 +20,5 @@ export const SKILL_NODES = {
 export const NODE_IDS = Object.fromEntries(
   Object.entries(SKILL_NODES).map(([key, value]) => [key, value.id])
 );
+
+export const SKILL_NAME_TRUNCATE_LIMIT = 50;

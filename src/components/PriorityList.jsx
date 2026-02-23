@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { SKILL_NODES } from '../data/jobs';
+import { SKILL_NODES, SKILL_NAME_TRUNCATE_LIMIT } from '../data/jobs';
 import { PriorityItem } from './PriorityItem';
 import { SortableItem } from './SortableItem';
 import './PriorityList.css';
@@ -140,17 +140,49 @@ function InlineAddForm({ availableNodes, onConfirm, onCancel, defaultNodeId, def
     onConfirm(nodeId, level);
   };
 
+  const getGroupedNodes = () => {
+    const groups = {
+      'Skill Nodes': [],
+      'Mastery Nodes': [],
+      'Boost Nodes': [],
+      'Common Nodes': []
+    };
+
+    availableNodes.forEach(node => {
+      if (node.type === 'skill') groups['Skill Nodes'].push(node);
+      else if (node.type === 'mastery') groups['Mastery Nodes'].push(node);
+      else if (node.type === 'boost') groups['Boost Nodes'].push(node);
+      else groups['Common Nodes'].push(node);
+    });
+
+    return groups;
+  };
+
+  const truncate = (str, n) => {
+    if (!str) return '';
+    // Replace newline characters with spaces for the dropdown display
+    const singleLine = str.replace(/\n/g, ' ');
+    return (singleLine.length > n) ? singleLine.slice(0, n-1) + '...' : singleLine;
+  };
+
   return (
     <div className="inline-add-row">
       <div className="inline-add-form">
         <select 
             value={nodeId} 
             onChange={handleNodeChange}
+            title={selectedNode?.displayName}
         >
-            {availableNodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                    {node.displayName || node.label}
-                </option>
+            {Object.entries(getGroupedNodes()).map(([groupName, nodes]) => (
+              nodes.length > 0 && (
+                <optgroup key={groupName} label={groupName}>
+                  {nodes.map((node) => (
+                    <option key={node.id} value={node.id} title={node.displayName}>
+                        {truncate(node.displayName || node.label, SKILL_NAME_TRUNCATE_LIMIT)}
+                    </option>
+                  ))}
+                </optgroup>
+              )
             ))}
         </select>
         <span className="level-prefix">Lv.</span>

@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PriorityList } from '../components/PriorityList';
+import { SKILL_NAME_TRUNCATE_LIMIT } from '../data/jobs';
 
 // Mock dependencies
 vi.mock('@dnd-kit/core', () => ({
@@ -41,10 +42,77 @@ describe('PriorityList InlineAddForm Logic', () => {
     ];
     const mockProgress = { origin: 1, m1: 0 };
     const mockNodeMetadata = {
-        origin: { id: 'origin', name: 'Origin Skill' },
-        m1: { id: 'm1', name: 'Mastery 1' },
-        common_1: { id: 'common_1', name: 'Coming Soon' }
+        origin: { id: 'origin', name: 'Origin Skill', displayName: 'Origin Skill', type: 'skill' },
+        m1: { id: 'm1', name: 'Mastery 1', displayName: 'Mastery 1', type: 'mastery' },
+        common_1: { id: 'common_1', name: 'Coming Soon', displayName: 'Coming Soon', type: 'common' }
     };
+
+    it('groups options by node type', () => {
+        const { container } = render(
+            <PriorityList 
+                sequence={mockItems}
+                progress={mockProgress}
+                onUpdateSequence={mockOnUpdateSequence}
+                nodeMetadata={mockNodeMetadata}
+                isCustom={true} 
+            />
+        );
+
+        fireEvent.click(screen.getByText('Edit'));
+        const triggers = screen.getAllByTitle('Insert Step Here');
+        fireEvent.click(triggers[0]);
+
+        // Check for optgroups directly
+        // Note: getByLabelText typically looks for <label> tags, not optgroup label attributes
+        // So we inspect the structure
+        const skillGroup = container.querySelector('optgroup[label="Skill Nodes"]');
+        const masteryGroup = container.querySelector('optgroup[label="Mastery Nodes"]');
+        const commonGroup = container.querySelector('optgroup[label="Common Nodes"]');
+
+        expect(skillGroup).toBeInTheDocument();
+        expect(masteryGroup).toBeInTheDocument();
+        expect(commonGroup).toBeInTheDocument();
+        
+        // Check content
+        expect(skillGroup).toHaveTextContent('Origin Skill');
+        expect(masteryGroup).toHaveTextContent('Mastery 1');
+        expect(commonGroup).toHaveTextContent('Coming Soon');
+    });
+
+    it('truncates long skill names', () => {
+        const longName = 'This is a very long skill name that should definitely be truncated because it is over fifty chars';
+        const longNameNode = { 
+            id: 'long', 
+            name: longName, 
+            displayName: longName,
+            type: 'skill' 
+        };
+        const metadataWithLongName = { ...mockNodeMetadata, long: longNameNode };
+
+        render(
+            <PriorityList 
+                sequence={mockItems}
+                progress={mockProgress}
+                onUpdateSequence={mockOnUpdateSequence}
+                nodeMetadata={metadataWithLongName}
+                isCustom={true} 
+            />
+        );
+
+        fireEvent.click(screen.getByText('Edit'));
+        const triggers = screen.getAllByTitle('Insert Step Here');
+        fireEvent.click(triggers[0]);
+
+        // Calculate expected truncated string
+        // Logic: if length > limit, slice(0, limit-1) + '...'
+        const limit = SKILL_NAME_TRUNCATE_LIMIT;
+        const expectedTruncated = longName.slice(0, limit - 1) + '...';
+
+        expect(screen.getByText(expectedTruncated)).toBeInTheDocument();
+        
+        // Full name should be in title attribute
+        expect(screen.getByText(expectedTruncated)).toHaveAttribute('title', longName);
+    });
 
     it('calculates default level correctly when inserting', () => {
         render(

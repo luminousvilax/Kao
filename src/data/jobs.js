@@ -1,4 +1,4 @@
-import { SKILL_NODES, NODE_IDS } from './constants';
+import { SKILL_NODES, NODE_IDS, SKILL_NAME_TRUNCATE_LIMIT } from './constants';
 
 // Known MapleStory job branches/classes for the dropdown
 export const JOB_GROUPS = {
@@ -71,6 +71,6 @@ export const getJobNodeData = (jobName, nodeId) => {
   };
 };
 
-export { SKILL_NODES, NODE_IDS };
+export { SKILL_NODES, NODE_IDS, SKILL_NAME_TRUNCATE_LIMIT };
 
 

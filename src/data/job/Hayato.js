@@ -25,6 +25,8 @@ export const DATA = {
 };
 
 export const SEQUENCE = [
+  { nodeId : NODE_IDS.ORIGIN, targetLevel: 1 },
+
   { nodeId: NODE_IDS.MASTERY_4, targetLevel: 1 },
   { nodeId: NODE_IDS.MASTERY_3, targetLevel: 1 },
   { nodeId: NODE_IDS.MASTERY_1, targetLevel: 1 },
