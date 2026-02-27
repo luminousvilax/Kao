@@ -1,3 +1,5 @@
+import { BACKGROUND_CONFIG } from '../data/constants';
+
 export const CURRENT_VERSION = 2;
 
 export const DEFAULT_STATE_V2 = {
@@ -5,6 +7,11 @@ export const DEFAULT_STATE_V2 = {
   characters: {},
   activeCharacterId: null,
   characterOrder: [], // IDs in sorted order
+  background: {
+    url: null,
+    opacity: BACKGROUND_CONFIG.DEFAULT_OPACITY,
+    blur: BACKGROUND_CONFIG.DEFAULT_BLUR,
+  },
 };
 
 export const createCharacter = (name, job, level) => {

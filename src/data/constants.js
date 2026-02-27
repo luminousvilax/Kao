@@ -20,3 +20,9 @@ export const SKILL_NODES = {
 export const NODE_IDS = Object.fromEntries(Object.entries(SKILL_NODES).map(([key, value]) => [key, value.id]));
 
 export const SKILL_NAME_TRUNCATE_LIMIT = 50;
+
+export const BACKGROUND_CONFIG = {
+  FILE_SIZE_LIMIT: 10 * 1024 * 1024, // 10MB
+  DEFAULT_OPACITY: 0.15,
+  DEFAULT_BLUR: 2,
+};
