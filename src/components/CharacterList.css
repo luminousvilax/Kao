@@ -16,7 +16,7 @@
 }
 
 .char-card {
-  background: white;
+  background: rgba(255, 255, 255, var(--content-bg-opacity, 0.9));
   border: 1px solid #e5e7eb;
   padding: 1rem;
   border-radius: 8px;

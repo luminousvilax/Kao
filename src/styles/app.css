@@ -2,7 +2,18 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  background: rgba(255, 255, 255, var(--bg-opacity, 1));
+
+  /* 
+    Opacity Tier System:
+    --bg-opacity is set on :root by JS (user configurable).
+    --content-bg-opacity is calculated to be always more opaque than the background, 
+       but scaled slightly so it's not purely solid white unless bg is solid.
+  */
+  --bg-gap: calc(1 - var(--bg-opacity, 1));
+  --content-bg-opacity: calc(var(--bg-opacity, 1) + (var(--bg-gap) * 0.6));
+
+  /* Use inherited --bg-opacity, fallback to 0.85 if not set */
+  background: rgba(255, 255, 255, var(--bg-opacity, 0.85));
   min-height: 100vh;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s ease;
@@ -275,7 +286,8 @@ header h1 {
 }
 
 section.tracker-card {
-  background: rgba(253, 253, 253, var(--bg-opacity, 1));
+  /* Make the card background transparent to avoid double-opacity stacking */
+  background: transparent;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 1.5rem;

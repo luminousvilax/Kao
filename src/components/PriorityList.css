@@ -1,5 +1,5 @@
 .priority-list {
-  background: #f9fafb;
+  background: rgba(249, 250, 251, var(--content-bg-opacity, 0.9));
   border-radius: 8px;
   padding: 1rem;
   border: 1px solid #e5e7eb;
@@ -94,7 +94,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: white;
+  background: rgba(255, 255, 255, var(--content-bg-opacity, 0.9));
   padding: 0.75rem;
   border-radius: 6px;
   border: 1px solid #e5e7eb;
