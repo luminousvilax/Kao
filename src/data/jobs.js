@@ -44,10 +44,16 @@ export const JOB_DATA = {
 };
 
 import solJanusIcon from '../assets/skills/common/sol_janus.png';
+import hexaStat1Icon from '../assets/skills/common/hexa_stat_1.png';
+import hexaStat2Icon from '../assets/skills/common/hexa_stat_2.png';
+import hexaStat3Icon from '../assets/skills/common/hexa_stat_3.png';
 
 // Data for skills shared by all jobs (e.g. Sol Janus)
 export const COMMON_SKILL_DATA = {
   [NODE_IDS.COMMON_1]: { name: 'Sol Janus', icon: solJanusIcon },
+  [NODE_IDS.STAT_1]: { name: 'Hexa Stat I', icon: hexaStat1Icon },
+  [NODE_IDS.STAT_2]: { name: 'Hexa Stat Ⅱ', icon: hexaStat2Icon },
+  [NODE_IDS.STAT_3]: { name: 'Hexa Stat Ⅲ', icon: hexaStat3Icon },
 };
 
 export const getJobNodeData = (jobName, nodeId) => {
