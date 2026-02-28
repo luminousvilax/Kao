@@ -44,6 +44,7 @@ This is a React + Vite single-page application for tracking MapleStory 6th Job (
     - **Skill Icons**: `src/assets/skills/{jobName}/`. Reference in job data files.
     - **UI Icons**: Use `src/components/Icons.jsx`.
 3.  **Skill IDs**: Use `NODE_IDS` keys (`origin`, `b1`, etc.) everywhere. Never use display labels as keys.
+4.  **Code Quality**: After implementing features or refactoring, run lint/test and ensure zero warnings. Follow existing code style for consistency. 
 
 ## Key Components
 

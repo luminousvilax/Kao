@@ -48,6 +48,10 @@ vi.mock('../components/Icons', () => ({
     Settings: () => <span>SettingsIcon</span>,
     Upload: () => <span>UploadIcon</span>,
     Download: () => <span>DownloadIcon</span>,
+    Image: () => <span>ImageIcon</span>,
+    HelpCircle: () => <span>HelpCircleIcon</span>,
+    Close: () => <span>CloseIcon</span>,
+    Trash: () => <span>TrashIcon</span>,
   },
 }));
 
