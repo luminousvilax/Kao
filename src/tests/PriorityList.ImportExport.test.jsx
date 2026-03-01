@@ -195,4 +195,87 @@ describe('PriorityList Import/Export', () => {
     expect(window.confirm).toHaveBeenCalled();
     expect(handleUpdate).not.toHaveBeenCalled(); // Cancelled
   });
+
+  it('imports over custom sequence when confirmed', () => {
+    const handleUpdate = vi.fn();
+    const mockImportData = { job: 'Hero', sequence: [{ nodeId: 'b1', targetLevel: 1 }] };
+    const fileContent = JSON.stringify(mockImportData);
+
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+    global.FileReader = class {
+      constructor() {
+        this.onload = null;
+      }
+      readAsText() {
+        if (this.onload) this.onload({ target: { result: fileContent } });
+      }
+    };
+
+    render(<PriorityList sequence={mockSequence} job="Hero" isCustom={true} onUpdateSequence={handleUpdate} />);
+
+    fireEvent.click(screen.getByTitle('Sequence Options'));
+    const fileInput = screen.getByDisplayValue('');
+    const file = new File([], 'seq.json', { type: 'application/json' });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    expect(window.confirm).toHaveBeenCalled();
+    expect(handleUpdate).toHaveBeenCalledWith(mockImportData.sequence);
+  });
+
+  it('alerts on invalid JSON', () => {
+    const handleUpdate = vi.fn();
+    vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    global.FileReader = class {
+      constructor() {
+        this.onload = null;
+      }
+      readAsText() {
+        if (this.onload) this.onload({ target: { result: '{ invalid json ' } });
+      }
+    };
+
+    render(<PriorityList sequence={mockSequence} job="Hero" onUpdateSequence={handleUpdate} />);
+
+    fireEvent.click(screen.getByTitle('Sequence Options'));
+    const fileInput = screen.getByDisplayValue('');
+    const file = new File([], 'bad.json', { type: 'application/json' });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    expect(window.alert).toHaveBeenCalledWith('Failed to parse JSON file.');
+    expect(handleUpdate).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  it('alerts on invalid data structure', () => {
+    const handleUpdate = vi.fn();
+    vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+    // Missing job or sequence
+    const fileContent = JSON.stringify({ version: 1 });
+
+    global.FileReader = class {
+      constructor() {
+        this.onload = null;
+      }
+      readAsText() {
+        if (this.onload) this.onload({ target: { result: fileContent } });
+      }
+    };
+
+    render(<PriorityList sequence={mockSequence} job="Hero" onUpdateSequence={handleUpdate} />);
+
+    fireEvent.click(screen.getByTitle('Sequence Options'));
+    const fileInput = screen.getByDisplayValue('');
+    const file = new File([], 'bad_struct.json', { type: 'application/json' });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    expect(window.alert).toHaveBeenCalledWith('Invalid sequence data format.');
+    expect(handleUpdate).not.toHaveBeenCalled();
+  });
 });

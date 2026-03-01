@@ -22,7 +22,12 @@ export function PriorityItem({ step, node, isDone, onComplete, onRemove, onEdit,
             <span className="step-icon-container">
               {/* Check if icon is likely an URL or emoji */}
               {node.icon.length > 4 ? (
-                <img src={node.icon} alt="" className="step-icon-img" decoding="async" />
+                <img
+                  src={node.icon}
+                  alt={node.displayName || 'Skill Icon'}
+                  className="step-icon-img"
+                  decoding="async"
+                />
               ) : (
                 node.icon
               )}

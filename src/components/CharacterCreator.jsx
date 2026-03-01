@@ -30,8 +30,9 @@ export function CharacterCreator({ onCreate, onCancel }) {
         <h2>Create New Character</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Character Name</label>
+            <label htmlFor="charName">Character Name</label>
             <input
+              id="charName"
               autoFocus
               type="text"
               value={name}
@@ -42,8 +43,8 @@ export function CharacterCreator({ onCreate, onCancel }) {
           </div>
 
           <div className="form-group">
-            <label>Job Group</label>
-            <select value={jobGroup} onChange={handleGroupChange}>
+            <label htmlFor="charJobGroup">Job Group</label>
+            <select id="charJobGroup" value={jobGroup} onChange={handleGroupChange}>
               <option value="All">All Groups</option>
               {Object.keys(JOB_GROUPS).map((group) => (
                 <option key={group} value={group}>
@@ -54,8 +55,8 @@ export function CharacterCreator({ onCreate, onCancel }) {
           </div>
 
           <div className="form-group">
-            <label>Job / Class</label>
-            <select value={job} onChange={(e) => setJob(e.target.value)}>
+            <label htmlFor="charJob">Job / Class</label>
+            <select id="charJob" value={job} onChange={(e) => setJob(e.target.value)}>
               {jobGroup === 'All'
                 ? Object.entries(JOB_GROUPS).map(([groupName, jobs]) => (
                     <optgroup key={groupName} label={groupName}>
@@ -75,8 +76,15 @@ export function CharacterCreator({ onCreate, onCancel }) {
           </div>
 
           <div className="form-group">
-            <label>Current Level</label>
-            <input type="number" min={260} max={300} value={level} onChange={(e) => setLevel(e.target.value)} />
+            <label htmlFor="charLevel">Current Level</label>
+            <input
+              id="charLevel"
+              type="number"
+              min={260}
+              max={300}
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+            />
           </div>
 
           <div className="actions">
